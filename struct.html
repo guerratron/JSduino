@@ -1,0 +1,32 @@
+<!-- BEGIN: ESTRUCTURA JSduino -->
+<div id="containerSVG" class="containerSVG">
+    <div id="JSduino">
+        <!-- TITLE -->
+        <h3 class="JSduino-title">JSduino III v0.5.0. || <span class="subtitle">Simulador de Proyectos Arduino en JS. ® <small>by <a href="mailto:dinertron@gmail" title="author">GuerraTron</a></small></span></h3>
+        <!-- DEVICES ZONE -->
+        <ul id="JSduino-devices" class="devices"><li data="switcher" title="Interruptor [INPUT]" id="s_81499" style="cursor: pointer;"><img src="API/images/actuators/switcher_v_off.png" alt="Interruptor" style="cursor: pointer;"></li><li data="buttonNO" title="Pulsador Normalmente Abierto (NO) [INPUT]" id="h_16663" style="cursor: pointer;"><img src="API/images/actuators/button_v_off.png" alt="Pulsador NO" style="cursor: pointer;"></li><li data="buttonNC" title="Pulsador Normalmente Cerrado (NC) [INPUT]" id="p_20954" style="cursor: pointer;"><img src="API/images/actuators/button_v_on.png" alt="Pulsador NC" style="cursor: pointer;"></li><li data="sensor" title="Dispositivo analógico, sensor, medidor, interruptor lineal, ... [INPUT]" id="j_15520" style="cursor: pointer;"><img src="API/images/actuators/lineal_5.png" alt="Sensor" style="cursor: pointer;"></li><li data="led" title="Dispositivo luminoso [OUTPUT]" id="k_97759" style="cursor: pointer;"><img src="API/images/actuators/led_red.png" alt="led" style="cursor: pointer;"><select id="deviceColor" alt="Seleccionar el color del led" style="cursor: pointer;"><option value="White" style="cursor: pointer;">Blanco</option><option value="Red" style="cursor: pointer;">Rojo</option><option value="Green" style="cursor: pointer;">Verde</option><option value="Blue" style="cursor: pointer;">Azul</option><option value="Orange" style="cursor: pointer;">Naranja</option><option value="Yellow" style="cursor: pointer;">Amarillo</option></select></li><li data="display" title="Dispositivo Pantalla [OUTPUT]" id="v_54399" style="cursor: pointer;"><img src="API/images/actuators/display_on.png" alt="Display" style="cursor: pointer;"></li><li></li></ul>
+        <!-- ACTUATORS ZONE -->
+        <ul id="JSduino-actuators" class="actuators"><li></li></ul>
+        <!-- BOARD ZONE -->
+        <div id="JSduino-board">
+            <!-- BUTTONS ZONE -->
+            <div class="containerButtons">
+                <div style="float: left;"><img title="JSduino by GuerraTron" alt="logo_JSduino" class="JSduino-logo" src="images/JSduino.png"><span class="indicator-traffic-24 indicator-traffic-red" title="STATE: running / delaying">&nbsp;</span></div>
+                <button id="btnRunPause" class="run-pause" title="to Run Code. (UN/POWER the R3. START-STOP the actions and Timmers)" data-run="false"><span class="icon icon-48 icon-run">&nbsp;</span></button><button class="showButtons toHide" title="Buttons Area" style="margin: auto auto 0.5em;">&nbsp;</button>
+                <div id="JSduino-buttonsAndCode" class="buttonsAndCode hidden">
+                    <button id="btnRestore" title="Altavoz" style="font-size: larger;"><span class="icon icon-48 icon-mute-off">&nbsp;</span></button>
+                    <form method="get" action="" target="_self"><fieldset><legend>Load</legend><button id="btnLoad" title="WARNING!! All contents will are remade. Load the states, values, actuators and code." data-load="false"><span class="icon icon-48 icon-load">&nbsp;</span></button><input id="inputLoad" type="hidden" value="..."><label id="labelLoad" for="chkLoad">📤</label><input id="chkLoad" name="chkLoad" title="checking for load Saved State" type="checkbox"></fieldset></form>
+                    <fieldset><legend>Object Saved</legend><button id="btnSave" title="Save the states, values, actuators and code." data-save="false" style="font-size: larger;"><span class="icon icon-48 icon-save">&nbsp;</span></button><button id="btnView" title="Visualiza el objeto guardado." style="font-size: larger;"><span class="icon icon-100x100 icon-view-saved">&nbsp;</span></button><button id="btnRestore" title="WARNING!!: Restaura el objeto guardado reseteandolo. Se perderán todos los datos guardados" style="font-size: larger;"><span class="icon icon-100x100 icon-restore">&nbsp;</span></button></fieldset>
+                    <fieldset class="codeAreas"><legend>Code</legend><button id="codeShowHideGlobal" title="code 'Global'"><span class="icon icon-48 icon-code-Global">&nbsp;</span></button><textarea id="codeAreaGlobal" class="codeArea codepress javascript linenumbers-on hidden" style="color: dodgerblue;">/*Global Code:*/</textarea><button id="codeShowHideSetup" title="code 'Setup'"><span class="icon icon-48 icon-code-Setup">&nbsp;</span></button><textarea id="codeAreaSetup" class="codeArea codepress javascript linenumbers-on hidden" style="color: orange;">/*Setup Code:*/</textarea><button id="codeShowHideLoop" title="code 'Loop'"><span class="icon icon-48 icon-code-Loop">&nbsp;</span></button><textarea id="codeAreaLoop" class="codeArea codepress javascript linenumbers-on hidden" style="color: lime;">/*Loop Code:*/</textarea></fieldset>
+                </div>
+            </div>
+            <!-- SVG ARDUINO -->
+            <div id="contSVG"><svg height="404.6" version="1.1" width="567.82" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; left: -0.7px; top: -0.4625px;" viewBox="0 0 218.3923076923077 155.6153846153846" preserveAspectRatio="xMidYMid meet">...</svg></div>
+        </div>
+        <!-- CONSOLE ZONE -->
+        <div id="JSduino-console" class="console"><img id="btnClearMonitor" class="btnClose" src="API/images/remove.png" title="Limpiar la consola"><textarea id="monitor" class="monitor">/*Console:*/</textarea></div>
+        <!-- MESSAGES ZONE -->
+        <div id="JSduino-messages" class="messages"><caption>Messages</caption></div>
+    </div>
+ </div>
+        <!-- END: ESTRUCTURA JSduino -->

@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta language="es-ES" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+        <title>JSduino III v0.5.0 - by GuerraTron</title>
+        <!-- FUENTE D A JS
+        <script type="text/javascript" src="Mando_y_Control-7.ino.js"></script> -->
+        <!-- <link rel="stylesheet" href="API/css/JSduino.css" type="text/css"/>-->
+        <script type="text/javascript" src="js/raphaeljs/raphael.min.js"></script>
+        <script type="text/javascript" src="../UTILS/UTILS.js"></script>
+        <!-- AST-PARSERs
+        <script type="text/javascript" src="js/AST/acorn/acorn.es.browser.js"></script>
+        <script type="text/javascript" src="js/AST/acorn/walk.es.browser.js"></script>
+        <script type="text/javascript" src="js/AST/escodegen/escodegen.browser.min.js"></script> -->
+        
+        <script type="text/javascript" src="API/js/modules/JSduino.js"></script>
+        <!-- <script type="text/javascript" src="API/js/modules/JSduino.preload.js"></script> -->
+        <script type="text/javascript" src="API/js/modules/JSduino.utils.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.events.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.Code.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.ino.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.ui.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.core.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.effects.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.raphael.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.SVG.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.Pin.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.Actuator.js"></script>
+        <script type="text/javascript" src="API/js/modules/JSduino.objects.js"></script>
+        
+        <!-- <style>
+        iframe>body>div#editor {
+            position: absolute;
+            width: 99%;
+            height: 200px;
+            background: steelBlue;
+            background-color: green;
+        }
+        #textArea{
+            
+        }
+        </style> -->
+        
+        <script type="text/javascript">
+            /*var _debug = true;
+            //alert( window.requestAnimationFrame);
+            if (this._debug && window.console) {
+                console.log('Applying to WRAPPER-------------------------------------------------------');
+            }
+            */
+            var uls =
+            {
+              INPUT:   { //UL ACTUADORES
+                            id:        "buttonsInput",
+                            caption:   "ENTRADAS:<br />",
+                            className: "actuators input",
+                            list: [   //lis
+                                    { //li actuator
+                                        type:      "switcher", //switcher, pulse, button, buttonNO, buttonNC, sensor, led, ledWhite, ledRed, ...
+                                        family:    "ANALOG",
+                                        id:        "A0",       //"hole_A0",
+                                        txt:       "AC-DC",
+                                        value:     1,
+                                        className: "actuator"
+                                    }/*,
+                                    {...}*/
+                                  ]
+                        },
+              OUTPUT:  { //UL RECEPTORES
+                            id:        "buttonsOutput",
+                            caption:   "SALIDAS:<br />",
+                            className: "switches output",
+                            list: [   //lis
+                                    {
+                                        type:      "ledBlue", //switche, pulse
+                                        family:    "DIGITAL",
+                                        id:        "8",        //"hole_8",
+                                        txt:       "Bomba OFF",
+                                        value:     1,
+                                        className: "led led-red"
+                                    }
+                                  ]
+                        }
+            };
+            var uls2 = {"INPUT":{"id":"buttonsInput","caption":"ENTRADAS:<br />","className":"actuators input","list":[{"type":"switcher","mode":"INPUT","family":"ANALOG","id":"A0","value":1,"className":"actuator"},{"type":"switcher","mode":"INPUT","family":"DIGITAL","id":"6","value":0,"className":"actuator"},{"type":"switcher","mode":"INPUT","family":"ANALOG","id":"A3","value":0,"className":"actuator"}]},"OUTPUT":{"id":"buttonsOutput","caption":"SALIDAS:<br />","className":"switches output","list":[{"type":"ledBlue","mode":"OUTPUT","family":"DIGITAL","id":"8","value":1,"className":"actuator"},{"type":"switcher","mode":"OUTPUT","family":"DIGITAL","id":"5","value":0,"className":"actuator"}]}};
+            
+            var uls3=/*OBJETO ACTUADORES*/
+{"INPUT":{"id":"buttonsInput","caption":"ENTRADAS:","className":"actuators input","list":[{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"13","txt":"AC_DC","value":0,"className":"actuator"},{"type":"switcher","mode":"INPUT","family":"DIGITAL","id":"12","txt":"AutMan","value":1,"className":"actuator"},{"type":"buttonNO","mode":"INPUT","family":"DIGITAL","id":"11","txt":"B_PARO","value":0,"className":"actuator"},{"type":"buttonNO","mode":"INPUT","family":"DIGITAL","id":"10","txt":"B_MARCHA","value":0,"className":"actuator"},{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"9","txt":"WARNING","value":0.3,"className":"actuator"},{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"8","txt":"HIDRO","value":1,"className":"actuator"},{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"7","txt":"GON","value":0,"className":"actuator"}]},"OUTPUT":{"id":"buttonsOutput","caption":"SALIDAS:","className":"switches output","list":[{"type":"ledOrange","mode":"OUTPUT","family":"DIGITAL","id":"6","txt":"G_START","value":1,"className":"actuator"},{"type":"ledRed","mode":"OUTPUT","family":"DIGITAL","id":"5","txt":"G_STOP","value":0,"className":"actuator"},{"type":"ledGreen","mode":"OUTPUT","family":"DIGITAL","id":"4","txt":"B_START","value":0,"className":"actuator"},{"type":"ledRed","mode":"OUTPUT","family":"DIGITAL","id":"3","txt":"B_STOP","value":1,"className":"actuator"},{"type":"ledOrange","mode":"OUTPUT","family":"DIGITAL","id":"2","txt":"B_WARNING","value":1,"className":"actuator"}]}};
+            
+            
+            UTILS.Events.addEvent(null, null, function ready(){
+                //DOMContentLoaded
+            });
+        </script>
+    </head>
+    <body>
+        <!-- <h3 class="title">JSduino III v0.5.0. by GuerraTron  ||  <span class="subtitle">Simulador de Proyectos Arduino.</span></h3>
+        <img src="images/JSduino.png" title="JSduino logo" alt="logo_JSduino" class="logo" />
+        <span class="clearfix" style="font-size:xx-small; margin:0; padding:0; line-height:0; display:block;">&nbsp;</span> -->
+        <!-- BEGIN: ESTRUCTURA JSduino -->
+        <div id="containerSVG">
+            
+        </div>
+        <!-- END: ESTRUCTURA JSduino -->
+        <!-- <div id="msgs" class="messages">Alerta</div> -->
+        <script>
+            "use strict";
+            //PUEDE EMPLEARSE EN CUALQUIER ETIQUETA SCRIPT AL FINAL DEL BODY 
+            //SIEMPRE QUE YA SE ENCUENTRE DEFINIDO EL CONTENEDOR HTML.
+            //INTERNAMENTE YA SE PROVEE DEL MÉTODO DE ESPERA 'DOMContentLoaded'
+            JSduino.init(document.getElementById("containerSVG")/*, null{width: 555/2, height:432/2, viewBox: {x:0, y:0, w:212, h:162}}, uls3*/);
+            //TODO EL CÓDIGO A EJECUTAR POR JSduino ES MEJOR EMBEBERLO EN EL INTERIOR DEL 
+            //MÉTODO 'toDo' CUYOS PARÁMETROS ADMITIDOS SON LA FUNCIÓN A EJECUTAR, PARÁMETROS OPCIONALES A PASAR A ESTA
+            //FUNCIÓN, Y OPCIONALMENTE EL TIEMPO EN MILISEGUNDOS A ESPERAR. POR DEFECTO ESPERA 100 msg.
+            /* JSduino.toDo(
+                function(){
+                    //var paper = jsvg;
+                   //REDIMENSIONAMOS EL OBJETO RAPHAEL:
+                   //paper.setSize("555", "432"); //raphael
+                   //paper.setViewBox(0, 0, 212, 162, true);//raphael
+                   var V = JSduino.V(); //Almacena todas las variables de usuario
+                    var A = JSduino.A(); //Contiene los métodos Arduino
+                    JSduino.preSetup(function(){
+                        A.toConsole("init preSetup...");
+                        V.msg = "::mensage a transmitir::";
+                        V.digOutCinco = 5;
+                        V.digInSeis = 6;
+                        V.analogIn3 = "A3";
+                        A.toConsole("end preSetup... to setup...");
+                    });
+                    JSduino.setup(function(){
+                        var vs = Object.keys(V);
+                        A.toConsole("init setup... " + vs.length + " variables definidas: {" + vs + "}");
+                        JSduino.ui.containers.Messages.innerHTML += "Hello World;\t";
+                        A.Serial.begin(2200);
+                        A.Serial.println("imprimiendo a consola desde Serial.println");
+                        A.pinMode(V.digOutCinco, "OUTPUT");
+                        A.pinMode(V.digInSeis, "INPUT");
+                        A.pinMode(V.analogIn3, "INPUT");
+                        A.toConsole("end setup... to loop...");
+                    });
+                    JSduino.loop(function(){
+                        //A.toConsole("init loop...");
+                        JSduino.ui.containers.Messages.innerHTML += "Hello World;\t";
+                        //A.delay(4000);
+                        //A.digitalWrite(V.digOutCinco, "HIGH");
+                        //A.digitalWrite(V.digInSeis, "LOW");
+                        //A.digitalWrite(V.analogIn3, "HIGH");//no permite la escritura porque es modo "INPUT" y porque no es familia "DIGITAL"
+                        //A.analogWrite(V.analogIn3, "HIGH"); //no lo permite porque es de modo INPUT
+                        //console.log(A.digitalRead(V.digOutCinco));
+                        //console.log("index:: analogRead(digOutCinco) :: " + A.analogRead(V.digOutCinco)); //SI lo permite porque el pin 5 también es PWM
+                        //console.log("index:: analogWrite(digOutCinco, 1) :: " + A.analogWrite(V.digOutCinco, 0.4)); //SI lo permite porque el pin 5 también es PWM
+                        //console.log(":: AnalogRead :: " + A.analogRead(V.analogIn3));
+                        //A.toConsole("end loop...");
+                    });
+                }, null, 200
+            );*/
+            /*window.onload=function(){
+            }*/
+        </script>
+        <!--
+        <div id="contSVG">
+        </div>
+        
+        <script type="text/javascript" src="js/Arduino-VIII-SVGOMG.svg.raphael.js"></script>-->
+    </body>
+</html>
