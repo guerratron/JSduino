@@ -63,20 +63,24 @@ This is an approximation to the behavior of the code on an *Arduino* real board,
 You have to look for alternatives to pause the code, in such a way that a BLINK example commonly written as:
 
 <code>
-//TRADITIONAL BLINK:  
-digitalWrite(5, "LOW");  
-delay(2000);  
-digitalWrite(5, "HIGH");  
-delay(2000);
+  
+    //TRADITIONAL BLINK:  
+    digitalWrite(5, "LOW");  
+    delay(2000);  
+    digitalWrite(5, "HIGH");  
+    delay(2000);
+
 </code>
 
 could be implemented as:
 
 <code>
-//BLINK ALTERNATIVE:  
-V.on = !V.on;  
-digitalWrite(5, V.on ? HIGH : LOW);  
-delay(2000);
+  
+    //BLINK ALTERNATIVE:  
+    V.on = !V.on;  
+    digitalWrite(5, V.on ? HIGH : LOW);  
+    delay(2000);
+
 </code>
 
 ### UTILIZATION: ###
@@ -104,8 +108,11 @@ The initialization '**init (..)**' method supports up to three parameters: the c
         {width: 555/2, height:432/2, viewBox: {x:0, y:0, w:212, h:162}}
 
    - objActuators: [Object json] Represents a devices state with which to start working, eg.:
-
+<code>
+  
         {"INPUT":{"id":"buttonsInput", "caption":"INPUTS:<br />", "className":"actuators input", "list":[{"type":"switcher","mode":"INPUT","family":"ANALOG","id":"A0","value":1,"className":"actuator"}, {"type":"switcher","mode":"INPUT","family":"DIGITAL","id":"6","value":0,"className":"actuator"}, {"type":"switcher","mode":"INPUT","family":"ANALOG","id":"A3","value":0,"className":"actuator"}]}, "OUTPUT":{"id":"buttonsOutput","caption":"OUTPUTS:<br />", "className":"switches output", "list":[{"type":"ledBlue","mode":"OUTPUT","family":"DIGITAL","id":"8","value":1,"className":"actuator"}, {"type":"switcher","mode":"OUTPUT","family":"DIGITAL","id":"5","value":0,"className":"actuator"}]}}
+
+</code>
 
 The **JSduino API** is responsible for generating the entire HTML structure and loading the styles, as well as assigning the js behavior for the entire interface.
 It is interesting to note that the plate is represented with an *SVG* image generated *'on the fly'* by means of the **Raphael-JS script** , which gives it the necessary dynamism and interactivity.
