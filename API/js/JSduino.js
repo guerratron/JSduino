@@ -1,94 +1,94 @@
 /*  
     "JSduino": Arduino en Javascript.
     by: Juan José Guerra Haba (guerraTron). 4-01-2018. <dinertron@gmail.com>
-    Trabaja dentro del namespace "JSduino"
-    necesita las librerías externas: 
-    "raphael.js", "acorn.js + walk.js", "escodegen.js" y "edit_area.js"
-    además de los scripts de estilo y el svg de la placa.
+    It Work within the "JSduino" namespace
+    and need the external libraries:
+    "raphael.js", "acorn.js + walk.js", "escodegen.js" and "edit_area.js"
+    in addition to the style scripts and the svg board
 */
 /*
-... para detalles en profundidad ver archivo 'readme.md'
+... for more details see file 'readme.md'
 
-EXPLICATIVO::
+EXPLANATORY::
 -------------
-API JSduino modelado como 'app-web' para la construcción y manejo de un sistema virtual 'Arduino' en el browser.
-Es auto-suficiente, se encarga de toda la construcción de la interfaz y de la lógica, así como de la carga
-de los scripts necesarios para su funcionamiento. Busca un óptimo redimensionado para que ocupe el máximo de ventana.
+JSduino API modeled as 'web-app' for the construction and management of an 'Arduino' virtual system in the browser.
+It is self-sufficient, it is responsible for all the construction of the interface and the logic, as well as the load
+of the scripts necessary for its operation. Search for a resized optimum so that it occupies the maximum window.
 
-La interfaz se ha dotado con la posibilidad de incluir algunos elementos llamados 'actuadores' (actuadores, receptores, 
-indicadores, ...), que nos posibilitan dar y recibir valores a los distintos pines de la placa para una interacción 
-gráfica que nos demuestra visualmente el funcionamiento de nuestro código.
+The interface has been provided with the possibility of including some elements called 'actuators' (actuators, receivers,
+indicators, ...), that allow us to give and receive values to the different pins of the board for an interaction
+graphic that visually demonstrates the functioning of our code.
 
-Tenemos CUATRO ventanas de representación del código, TRES donde se irá escribiendo código tal cual lo haríamos en el IDE 
-Arduino (aunque de momento sólo en lenguage 'javascript') incluso utilizando las propias funciones Arduino, separadas en 
-zonas Global, Setup y Loop. Otra es la ventana de salida de la consola, que emula precisamente eso, un monitor de consola 
-Arduino.
+We have FOUR code representation windows, THREE where we will write code as we would in the IDE
+Arduino (although at the moment only in 'javascript' language) even using the own Arduino functions, separated in
+Global, Setup and Loop zones. Another is the output window of the console, which emulates just that, a Arduino console monitor.
 
-La placa es totalmente operativa de forma que incluso sus 'leds' indican el estado real de ella en cada momento, así 
-como el botón de Reset es interactivo y produce el resultado esperado.
+The board is fully operational so that even its 'LEDs' indicate the real state of it at all times, as well
+as the Reset button is interactive and produces the expected result.
 
-OBSERVACIONES::
+OBSERVATIONS::
 ---------------
-Por motivos méramente visuales, se ha ralentizado INTENCIONALMENTE los ciclos de ejecución del código escrito; por un 
-lado para permitir el visionado de los resultados y por otro, faltaría más, porque el ordenador es infinitamente más veloz 
-que cualquier placa Arduino. 
+For purely visual reasons, the execution cycles of the written code have been slowed down INTENTIONALLY; for
+side to allow the viewing of the results and on the other, it would be missing more, because the computer is infinitely faster
+than any Arduino board.
 
-Dicho esto hay que puntualizar que esto es una emulación con el propósito de facilitar el desarrollo, no una herramienta final; 
-se supone que tras testar nuestro código pasaremos a la fase de construcción real del prototipo con el IDE Arduino.
+Having said that, we must point out that this is an emulation with the purpose of facilitating development, not a final tool;
+it is assumed that after testing our code we will pass to the real construction phase of the prototype with the Arduino IDE.
 
-GRACIAS::
+THANKS::
 ---------
-Utiliza el fantástico script 'raphael.js' para la construcción del 'svg' y algunos efectos. Muchas gracias 
-a 'Dmitry Baranovskiy' (http://dmitry.baranovskiy.com/); el cual permite una compatibilidad sin precedentes 
-desde: Firefox 3.0+, Safari 3.0+, Chrome 5.0+, Opera 9.5+ and Internet Explorer 6.0+.
-Debido a esto sumamos otros cuantos kbts más pero ganamos en representación visual.
+It use the fantastic 'raphael.js' script for the construction of 'svg' and some effects. Thank you very much
+to 'Dmitry Baranovskiy' (http://dmitry.baranovskiy.com/); which allows unprecedented compatibility
+from: Firefox 3.0+, Safari 3.0+, Chrome 5.0+, Opera 9.5+ and Internet Explorer 6.0+.
+Due to this we add another few kbts more but we gain in visual representation.
 
-También mis agradecimientos a los desarrolladores de las librerías 'acorn y escodegen' que permiten parsear código javascript 
-permitiendo crear un AST manipulable.
+Also my thanks to the developers of the libraries 'acorn and escodegen' that allow to parse javascript code
+allowing to create a manipulable AST.
 
-Y gracias a la API 'edit-area' con la que he podido mostrar las ventanas de código de forma más 'amigable'.
+And thanks to the API 'edit-area' with which I was able to show the code windows in a more 'friendly' way.
 
-CARACTERÍSTICAS:
+FEATURES:
 ----------------
-- Programación con filosofía POO. Se ha desarrollado por módulos, aunque finalmente se ha montado sobre un único archivo 'JSduino.js' 
-  para facilitar la carga.
-- Empleo de namespaces y closures.
-- Ámbito global limpio. Sólo una variable global (jsvg) para el acceso al objeto 'svg' y un único namespace: 'JSduino'
-- Autocarga de scripts necesarios. (css, svg, ...)
-- Espera inteligente a la carga total de la página. (timers, 'DOMContentLoaded', ...)
-- Simulación de funciones y características Arduino.
-- Interfaz interactiva con efectos, sonidos.
+- Programming with OOP philosophy. It has been developed by modules, although it has finally been mounted on a single file 'JSduino.js'
+   to facilitate loading.
+- Use of namespaces and closures.
+- Clean global scope. Only one global variable (jsvg) for accessing the object 'svg' and a single namespace: 'JSduino'
+- Self-loading of necessary scripts. (js, css, svg, ...)
+- Intelligent wait for the total load of the page. (timers, 'DOMContentLoaded', ...)
+- Simulation of Arduino functions and features.
+- Interactive interface with effects, sounds.
+- Quasi-real Simulation
 
-PROBLEMAS Y COMO RESOLVERLOS::
+TROUBLESHOOTING::
 ------------------------------
-//HAY QUE DARLE TIEMPO AL PARSEADOR PARA QUE PROCESE Y CARGUE EL ARCHIVO JS
-//Si cargamos el script '*.svg.raphael.js' mediante una etiqueta normal al final del 'body' no nos daría problemas, pero
-//al cargarlo 'dinamicamente' en la función 'init' de 'JSduino' se realiza una pseudo-recarga que nos impide trabajar adecuadamente
-//dentro del evento 'DOMContentLoaded'. 
-//Por eso todo lo que sea intentar acceder al objeto 'jsvg' necesitamos ralentizarlo con un 'timer'.
-/ *
+//THERE MUST BE TIME FOR THE PARSER TO PROCESS AND LOAD THE JS FILE
+//If we load the script '* .svg.raphael.js' with a normal label at the end of 'body' it would not give us problems, but
+// when loading 'dynamically' in the 'init' function of 'JSduino' a pseudo-recharge is performed that prevents us from working properly
+// inside the event 'DOMContentLoaded'.
+// That's why everything that is trying to access the object 'jsvg' we need to slow it down with a 'timer'. 
+/*
 setTimeout(function(){
    var paper = jsvg;
-   //REDIMENSIONAMOS EL OBJETO RAPHAEL:
+   //RESIZE THE RAPHAEL OBJECT:
    paper.setSize("555", "432"); //raphael
    paper.setViewBox(0, 0, 212, 162, true);//raphael
    //JSduino.Raphael.scan();
 }, 100);* /
 */
 
-//NAMESPACE GLOBAL
+//GLOBAL NAMESPACE
 var JSduino = (function (_JSduino_){
     "use-strict";
     
-    //CONSTANTES DE TIEMPO PARA LOS TIMERs
+    //TIME CONSTANTS FOR TIMERS
     var _TICKS_INTERVAL = 1000, _TICKS_INIT = 100, _TICKS_CLEAR = 100, _START_DELAY = 800; //msg.;
     //MUTE SOUNDS
     var _PLAY_SOUNDS_ = true;
     var mute = !_PLAY_SOUNDS_;
-    //OBJETO QUE DEFINE LOS DISPOSITIVOS A UTILIZAR
-    /* Son atributos de objetos DOMElements que deben corresponderse más o menos fielmente con la constante 
-     * definida en 'JSduino.Actuator' :: 'actuatorTypes', aunque estos últimos se refieran a objetos javascript; donde
-     * 'data' se correspondería con 'name', y 'src' con 'imgs' más o menos. */
+    //OBJECT DEFINING THE DEVICES TO BE USED
+    /* They are attributes of DOMElements objects that must correspond more or less faithfully with the constant
+     * defined in 'JSduino.Actuator' :: 'actuatorTypes', although the latter refer to javascript objects; where
+     * 'data' would correspond to 'name', and 'src' to 'imgs' more or less. */
     var objectDevices = [
         {
             types: [],
@@ -143,9 +143,9 @@ var JSduino = (function (_JSduino_){
     
     var objectActuators = {};
     
-     //NOMBRE DE LA VARIABLE JAVASCRIPT QUE APUNTA AL 'CANVAS-PAPER' DEL OBJETO RAPHAEL QUE CONTIENE EL 'SVG'
-    var _PAPER_RAPHAEL_ = 'jsvg';   //Debe ser la misma que la definida en el propio objeto '*.svg.raphael.js'
-    var _ID_SVG_ = "contSVG";       //Id del contenedor. Debe ser el mismo que el que aparece en el propio objeto '*.svg.raphael.js'
+     //NAME OF THE JAVASCRIPT VARIABLE THAT TARGETS THE 'CANVAS-PAPER' OF THE RAPHAEL OBJECT THAT CONTAINS THE 'SVG'
+    var _PAPER_RAPHAEL_ = 'jsvg';   //It must be the same as the one defined in the object itself '*.svg.raphael.js'
+    var _ID_SVG_ = "contSVG";       //Id of the container. It must be the same as the one that appears on the object itself '*.svg.raphael.js'
     //var scriptUTILS = 'API/js/UTILS.js';
     var styleCSS = 'API/css/JSduino.css';
     var scriptRaphael = 'js/raphaeljs/raphael.min.js';
@@ -156,7 +156,7 @@ var JSduino = (function (_JSduino_){
     var scriptEscodegen = 'js/AST/escodegen/escodegen.browser.min.js';
     //var styleEditArea = 'js/editarea/edit_area.css';
     var scriptEditArea = "js/editarea/edit_area_full.js";
-    /*var modulesArray = [    //NO PUEDE UTILIZARSE, DA PROBLEMAS POR LA EJECUCIÓN EN LA CARGA
+    /*var modulesArray = [    //CAN NOT BE USED, GIVES PROBLEMS FOR EXECUTION IN THE LOAD
         //'../UTILS/UTILS.js',
         //'API/js/raphaeljs/raphael.min.js',
         //'API/js/modules/JSduino.js',
