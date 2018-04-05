@@ -1,0 +1,272 @@
+body{ margin-top: 1px; }
+.containerSVG{
+    background: steelBlue;
+    padding:4px;
+}
+.JSduino-logo{
+    /*float:left;*/
+    max-width:48px;
+    max-height: 48px;
+}
+.JSduino-title{
+    margin-top:0.1em;
+    margin-bottom:0;
+    text-align:center;
+    background-color: whiteSmoke; 
+    border: 1px solid silver; border-radius: 6px; box-shadow: 2px 4px 6px gray;
+}
+.JSduino-title>.subtitle{
+    color:#333;
+    font-size:smaller;
+    background:lightYellow;
+}
+#contSVG{ width:25%; min-width: 555px; height:25%; /*min-height:432px;*/ margin:auto;
+            /*background-image: url('images/backgrounds/Arduino1-VII - SVGOMG.svg');*/
+            background-position: center; /*right bottom, left top;*/
+            background-repeat: no-repeat;
+            background-size: contain; /*100% 100%; cover;*/
+            background-origin: content-box;/*padding-box;border-box;*/
+            background-clip: content-box;
+            /*background-color: #4b4ada;*/ 
+            border: 1px solid silver;
+            border-radius: 6px;
+            box-shadow: 2px 4px 6px gray;
+            padding: 20px;
+            vertical-align: middle;
+}
+/*ACTUATORS*/
+.actuators{
+    width:99%; /*min-height: 100px;*/
+    margin:auto; padding: 2px;
+    background-color: whiteSmoke; 
+    border: 1px solid silver; border-radius: 6px; box-shadow: 2px 4px 6px gray;
+    list-style-type: none;
+}
+.actuators>li{
+    display: block;
+    position: relative;
+    float: left;
+    /*width:8%; min-width: 60px; height:145px; min-height:100px;*/
+    max-width:60px;
+    height: 70px;
+    padding: 0;
+    margin: auto;
+    text-align: center;
+    vertical-align: middle;
+    background-color: steelBlue; 
+    border: 1px solid steelBlue; border-radius: 4px; box-shadow: 1px 2px 4px gray;
+}
+.actuators>li.act-INPUT{
+    
+}
+.actuators>li.act-OUTPUT{
+    background-color: coral; 
+}
+.actuators>li:last-child{
+    visibility: hidden; 
+    /*width:1px; min-width:1px; height:1px; min-height: 1px; */
+    width:100%;
+    height:100%;
+    border: none; box-shadow: none; 
+    float:none;
+    clear:both;
+}
+.actuators>li>img{
+    width: 50%;
+    height: 60%;
+    cursor: pointer;
+    margin: auto;
+}
+.actuators>li>.nameLi{
+    font-size: xx-small;
+    font-weight: bolder;
+    text-align: center;
+    width: 96%;
+    height: 20%;
+    color:whiteSmoke; background: #333333;
+    display:block;
+}
+.actuators>li>.settings{
+    height:50%; min-height: 40px; border: 1px solid darkGray; box-shadow: none;
+    text-align: left;
+}
+
+/*DEVICES*/
+.devices{
+    width:99%; height:5%; min-height: 50px;
+    margin:auto; padding: 2px;
+    background-color: lightYellow; 
+    border: 1px solid silver; border-radius: 6px; box-shadow: 2px 4px 6px gray;
+    list-style-type: none;
+}
+.devices>li{
+    display: block;
+    position: relative;
+    float: left;
+    width:15%; min-width: 50px; height:45px; min-height:40px;
+    padding: 0;
+    margin: auto;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #AAAAAA; /*DodgerBlue;*/ 
+    border: 1px solid silver; border-radius: 2px; box-shadow: 1px 1px 2px gray;
+    opacity: 0.75;
+}
+.devices>li:hover{
+    opacity: 1;
+}
+.devices>li>img{
+    max-width: 90%;
+    max-height: 90%;
+    margin: auto;
+    cursor: pointer;
+}
+.devices>li:last-child{
+    visibility: hidden; 
+    width:1px; min-width:1px; height:1px; min-height: 1px; border: none; box-shadow: none; clear:both;
+}
+#monitor{
+    width: 97%;
+    height: 150px;
+    background: black;
+    border: 2px ridge gray;
+    margin: auto;
+    padding: 10px;
+    font-family: "system";
+    font-size: smaller;
+    color: lime;
+}
+ /*El color depende de cada área. Se sobrescribe en 'ui'*/
+.codeAreas{}
+.codeArea{
+    position:absolute; width:98%; height:540px; 
+    margin:auto; padding:4px; 
+    background: #333333; color: dodgerBlue;
+}
+
+.containerButtons{
+    position:fixed; z-index:1000; background: whiteSmoke; 
+    margin-left:0; padding:0.5em; border: 1px solid silver; border-radius: 2px; box-shadow: 1px 1px 2px gray;
+    text-align:center;
+}
+.showButtons{
+    width: 48px;
+    height: 48px;
+    border: 1px solid silver; border-radius: 2px; box-shadow: 1px 1px 2px gray; 
+    color:steelBlue;
+    /*background: url('../images/actuators/buttons_inv.png');*/
+    background: url('../images/buttons/FLAT/data_gray.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center;
+    background-origin: content-box;
+    padding:0.2em;
+    cursor:pointer;
+    display:block;
+    float:left;
+}
+.run-pause{
+    text-align: center;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    margin-right: 15px;
+    color:steelBlue;
+    padding:0.2em;
+    cursor:pointer;
+    display:block;
+    float:left;
+}
+.buttonsAndCode{/*position:relative;*/}
+.buttonsAndCode fieldset{display:block; /*float:left;*/ width:auto; margin:auto; padding:0.1em;}
+.buttonsAndCode button{display:block; float:left; width:48px; height:48px; font-size: larger; color: steelBlue; cursor:pointer; margin:auto; padding:0.1em;}
+.buttonsAndCode input{width: auto; }
+.buttonsAndCode > input{display:block; width:95%; font-size: x-large; color: steelBlue; cursor:pointer;}
+#btnLoad{ color: red; }
+#btnRestore{ color: red; }
+#codeShowHideGlobal{ color:blue;}
+#codeShowHideSetup{ color:darkOrange;}
+#codeShowHideLoop{ color:green;}
+.show{ display: block; }
+.hidden{ display: none; }
+.x-small{font-size: x-small;}
+.blue{color: blue;}
+.steelBlue{color: steelBlue;}
+.btnClose{position:absolute; right:2%; cursor:pointer; z-index:1000;}
+input[type="checkbox"]{ cursor: pointer; }
+.messages{clear:both;}
+.clearfix{clear:both;}
+
+.icon{
+    display: block;
+    margin: 0;
+    /*border: 1px solid silver; border-radius: 2px; box-shadow: 1px 1px 2px gray; */
+    color:steelBlue;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center;
+    background-origin: content-box;
+    padding:0;
+    cursor:pointer;
+    width: 100%;
+    height: 100%;
+    background-size: 100%;
+}
+/*.icon-48{
+    width: 48px;
+    height: 48px;
+    background-size: 48px;
+}*/
+.icon-96{
+    width: 96px;
+    height: 96px;
+    background-size: 96px;
+}
+.icon-100x100{
+    width: 100%;
+    height: 100%;
+    background-size: 100%;
+}
+.icon-run{ background-image: url('../images/buttons/FLAT/Start.png'); }
+.icon-pause{ background-image: url('../images/buttons/FLAT/Pause.png'); }
+.icon-load{ background-image: url('../images/buttons/FLAT/Refresh.png'); }
+.icon-save{ background-image: url('../images/buttons/FLAT/Save.png'); }
+.icon-view-saved{ background-image: url('../images/buttons/FLAT/eye_2.png'); }
+/*.icon-view-saved{ background-image: url('../images/buttons/FLAT/Eye.png'); }
+.icon-restore{ background-image: url('../images/buttons/FLAT/Delete.png'); }*/
+.icon-restore{ background-image: url('../images/buttons/FLAT/trash_morada.png'); }
+/*.icon-code-Setup{ background-image: url('../images/buttons/FLAT/code_orange.png'); }
+.icon-code-Global{ background-image: url('../images/buttons/FLAT/code_steelblue.png'); }
+.icon-code-Loop{ background-image: url('../images/buttons/FLAT/code_green.png'); }
+.icon-code-black{ background-image: url('../images/buttons/FLAT/code_black.png'); }*/
+.icon-code-Setup{ background-image: url('../images/buttons/FLAT/monitor_code_orange.png'); }
+.icon-code-Global{ background-image: url('../images/buttons/FLAT/monitor_code_steelblue.png'); }
+.icon-code-Loop{ background-image: url('../images/buttons/FLAT/monitor_code_green.png'); }
+.icon-code-black{ background-image: url('../images/buttons/FLAT/monitor_code_black.png'); }
+.icon-mute-off{ background-image: url('../images/buttons/FLAT/altavoz.png'); }
+.icon-mute-on{ background-image: url('../images/buttons/FLAT/altavoz_silent.png'); }
+
+.indicator-traffic-24{
+    display: block;
+    /*float:left;*/
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center;
+    background-origin: content-box;
+    width: 32px !Important;
+    height: 32px !Important;
+    background-size: 32px;
+    margin-left:10px;
+    
+}
+.indicator-traffic-red{
+    /*background-image: url('../images/buttons/FLAT/trafficlight-red.png');*/
+    /*background-image: url('../images/buttons/FLAT/Flag-red.png');*/
+    background-image: url('../images/flags/Flag-red-mini.gif');
+}
+.indicator-traffic-green{
+    /*background-image: url('../images/buttons/FLAT/trafficlight-green.png');*/
+    /*background-image: url('../images/buttons/FLAT/Flag1-green.png');*/
+    background-image: url('../images/flags/Flag-green-mini.gif');
+}

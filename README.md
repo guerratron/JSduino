@@ -1,4 +1,3 @@
-# JSduino  
 JSduino v0.1.0
 by GuerraTron  
 2018@<dinertron@gmail.com>
