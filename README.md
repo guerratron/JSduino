@@ -2,6 +2,10 @@ JSduino v0.1.0
 by GuerraTron  
 2018 - <dinertron@gmail.com>
 
+![JSduino-logo](./JSduino-logo.png)
+
+<img src="./images/JSduino.png" alt="JSduino-logo" />
+
 ## INTRO: ##
 
 *'JSduino web-app' is a great Arduino simulator in JS.*
