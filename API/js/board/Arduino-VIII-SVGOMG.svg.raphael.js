@@ -1,35 +1,35 @@
 /* by GuerraTron-18. FROM: 'svgToRaphaelParser::saveToFile(...)' 
-    * Este código debe instanciarse una vez exista el contenedor evidentemente, pero antes de 
-    * que se haya creado ninguna instancia de Raphael. */
+    * This code must be instantiated once the container exists evidently, but before
+    * that none instance of Raphael has been created. */
     if(Raphael){
-    /** MUY IMPORTANTE:: Raphael no mantiene por defecto el atributo 'id' de las figuras del canvas SVG. 
-      * El API asigna un 'id' pero al objeto tipo 'raphael' creado, no al elemento typo DOM que es renderizado.
-      * Si por cualquier motivo se desea mantener ese atributo 'id' en las figuras creadas se le debe agregar 
-      * al parámetro '_availableAttrs' para que lo tenga en cuenta a la hora del parseado de figuras, y todo 
-      * esto ANTES de la creación de ninguna instancia de Raphael.*/
+    /** VERY IMPORTANT :: Raphael does not maintain by default the 'id' attribute of the SVG canvas figures.
+      * The API assigns an 'id' but to the object type 'raphael' created, not to the element typo DOM that is rendered.
+      * If for any reason you want to keep that attribute 'id' in the figures created you must add it
+      * to the parameter '_availableAttrs' so that you take it into account at the time of the pairing of figures, and all
+      * this BEFORE the creation of any instance of Raphael.*/
     if(Raphael._availableAttrs){ Raphael._availableAttrs.id=''; }
-    /** Función 'getByDomId' extendida para Raphael, para que pueda llamarse a un objeto raphael a través de su 
-      * id de elemento DOM. (Necesita incluirse este código antes de que ninguna instancia de Raphael sea creada, 
-      * y solo funcionará si se mantiene el código del bucle del '_POST_CODE').
-      * Por ejemplo: <code> jsvg.getByDomId('circle3545').attr('fill', 'yellow'); </code> 
-      * @param domId [string] El id del elemento del DOM que se desea.
+    /** Extended 'getByDomId' function for Raphael, so that a raphael object can be called through its
+      * DOM element id. (This code needs to be included before any instance of Raphael is created,
+      * and will only work if the code of the '_POST_CODE' loop is maintained).
+      * by example: <code> jsvg.getByDomId('circle3545').attr('fill', 'yellow'); </code> 
+      * @param domId [string] The DOMElement id what is desired.
       * @see #getDomById(string)
-      * @return [Raphael Object] El objeto Raphael asociado o que ha creado a este DOMElement. */
+      * @return [Raphael Object] The Raphael object associated with or that has created this DOMElement. */
     Raphael.fn.getByDomId = function (domId){
         var el = document.getElementById(domId);
-        return el ? this.getById(el.getAttribute('Rid')) : el; //RETORNA UN 'object Raphael'
+        return el ? this.getById(el.getAttribute('Rid')) : el; //RETURN A 'Raphael object'
     };
-    /** Función 'getDomById' extendida para Raphael, para que pueda llamarse a un elemento del DOM creado a través 
-      * de su id de objeto Raphael. (Necesita incluirse este código antes de que ninguna instancia de Raphael sea creada, 
-      * y solo funcionará si se mantiene el código del bucle del '_POST_CODE').
-      * Por ejemplo: <code> jsvg.getDomById('3j54t5').setAttribute('fill', 'yellow'); </code> 
-      * @param RaphaelId [string] El id del objeto Raphael del que se desea obtener su DOMElement asociado.
+    /** Extended 'getDomById' function for Raphael, so you can call an element of the DOM created through
+      * of its object id Raphael. (This code needs to be included before any instance of Raphael is created,
+      * and will only work if the code of the '_POST_CODE' loop is maintained).
+      * by example: <code> jsvg.getDomById('3j54t5').setAttribute('fill', 'yellow'); </code> 
+      * @param RaphaelId [string] The id of the Raphael object from which you want to obtain its associated DOMElement.
       * @see #getByDomId(string)
-      * @return [DOMElement] El elemento DOM asociado o creado por este objeto raphael. */
+      * @return [DOMElement] The DOM element associated with or created by this raphael object. */
     Raphael.fn.getDomById = function (raphaelId){
         var obj = this.getById(raphaelId);
         return obj.node;
-        //return obj ? document.getElementById(obj.attr('id')) : obj; //RETORNA UN 'DOMElement'
+        //return obj ? document.getElementById(obj.attr('id')) : obj; //RETURN A 'DOMElement'
     };
 var jsvg = Raphael(document.getElementById("contSVG") ? document.getElementById("contSVG") : "contSVG", 283.91, 202.3);
 jsvg.setViewBox(0, 0, 212.930000, 151.730000, false);
@@ -198,7 +198,7 @@ p_txt_mail.hover(function(ev) {
 });
 p_txt_mail.click(function(ev){
     //FROM: https://stackoverflow.com/questions/10172499/mailto-using-javascript?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-    //los protocolos que no devuelven datos al navegador pueden abrirse directamente, pues el navegador emplea clientes instalados en la máquina para abrirlos
+    //protocols that do not return data to the browser can be opened directly, since the browser uses clients installed on the machine to open them
     window.location.href='mailto:dinertron@gmail'; 
     /*var mail = document.createElement("a");
     mail.href="mailto:dinertron@gmail.com";
@@ -452,7 +452,7 @@ g_digitalPins_0_7.push(p_hole_0_rx0_border);
 g_pins.push(g_digitalPins_0_7);
 g_breadboard.push(g_pins);
 g_Arduino_Uno_R3.push(g_breadboard);
-//Objeto con todos los nombres de grupos según sus 'ids' en el SVG;
+//Object with all group names according to their 'ids' in the SVG;
 var raphaelGroups = null;
 try{
 raphaelGroups = {
@@ -500,21 +500,21 @@ raphaelGroups = {
 }catch(e){ raphaelGroups = null; }
 
 
-    /*Rid <del>And Did</del> (Raphael-id <del>y DOM-id</del>) //Se ha suprimido el atributo 'Did' porque puede accesderse fácimente mediante 'elRaphael.node'
-    * Seguidamente se ejecuta un loop que recorre todos los elementos 'Raphael' y les asigna <del>un atributo 'Did' con el 'id' 
-    * del elemento 'DOM' que han creado</del>. Para ser parejo, también asigna un atributo '<b>Rid</b>' al elemento 'DOM' creado. 
-    * EVIDENTEMENTE hay que utilizar esta función cuando haya terminado de generarse todo el DOM por parte de Raphael. 
-    * La variable 'jsvg' debe ser el objeto 'CANVAS Raphael' que apunta al 'SVG del DOM' creado. */
+    /*Rid <del>And Did</del> (Raphael-id <del>y DOM-id</del>) //The 'Did' attribute has been deleted because it can be easily accessed through 'elRaphael.node'
+     * A loop is then executed that runs through all the elements 'Raphael' and assigns them an attribute of 'Did' with the 'id'
+     * of the 'DOM' element that they have created </del>. To be even, it also assigns a '<b> Rid </b>' attribute to the created 'DOM' element.
+     * EVIDENTLY you must use this function when you have finished generating the entire DOM by Raphael.
+     * The variable 'jsvg' must be the object 'CANVAS Raphael' that points to the 'SVG of the DOM' created. */
     (function(){ //CLOSURE
-        /** Los dos objetos (Raphael y DOMElement) quedarán atados a través de los atributos <del>'Did'</del> y '<b>Rid</b>' respectivamente. */
+        /** The two objects (Raphael and DOMElement) will be tied through the attributes <del> 'Did' </del> and '<b> Rid </b>' respectively. */
         function setIds(el){
-            //if(el.attr('id')){ el.attr('Did', el.attr('id')); }//Le asigna al objeto 'RAPHAEL' como atributo 'Did' el id del elemento DOM al que se refiere
-            el.node.setAttribute('Rid', el.id);//Le asigna al elemento 'DOM' como atributo 'Rid' el id del elemento 'Raphael' al que se refiere
+            //if(el.attr('id')){ el.attr('Did', el.attr('id')); }//It assigns the 'RAPHAEL object' as attribute 'Did' the id of the DOM element it refers to
+            el.node.setAttribute('Rid', el.id);//It assigns to the element 'DOM' as attribute 'Rid' the id of the element 'Raphael' to which it refers
         }
         if(jsvg.forEach){
             jsvg.forEach(setIds);
         } else {
-            //Sustituye al método '.forEach'
+            //Replaces the '.forEach' method
             var el = jsvg.bottom;
             while (el) {
                 setIds(el);
