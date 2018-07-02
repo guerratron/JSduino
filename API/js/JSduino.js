@@ -6,7 +6,10 @@
     "raphael.js", "acorn.js + walk.js", "escodegen.js" and "edit_area.js"
     in addition to the style scripts and the svg board
 */
-/*
+/**
+@namespace JSduino
+@modules [ Code, core, effects, events, ino, objects, preload, raphael, SVG, ui, utils, Actuator, Pin ]
+
 ... for more details see file 'readme.md'
 
 EXPLANATORY::
@@ -74,9 +77,17 @@ setTimeout(function(){
    paper.setViewBox(0, 0, 212, 162, true);//raphael
    //JSduino.Raphael.scan();
 }, 100);* /
-*/
 
-//GLOBAL NAMESPACE
+All this has been resolved in a cross-browser way (almost, IE?), ignoring these calls because making them the API itself. But
+even so it can present some anomalies in certain conditions and depending on the browser used.
+If when opening it presents a problem, it is usually solved by refreshing the page.
+
+SUMMARY::
+---------
+Call the API with the method 'init(..)', giving it some DOM element as a container, ... AND ENJOY THE MAGIC !!!
+
+@see init(..) Main public method, it builds the interface
+*/
 var JSduino = (function (_JSduino_){
     "use-strict";
     
@@ -170,7 +181,7 @@ var JSduino = (function (_JSduino_){
         'API/js/modules/JSduino.SVG.js',
         'API/js/modules/JSduino.Pin.js',
         'API/js/modules/JSduino.Actuator.js'];*/
-    var raphael_groups = null; //Variable definida en el archivo '*.svg.raphael.js'
+    var raphael_groups = null; //Variable defined in the '*.svg.raphael.js' file
         
     //VARs
     var devices = []; //{"id": attrs.data, "name": attrs.data, "el": el} //[{"name": attrs.data, "el": el}, {...}, ...]
@@ -182,13 +193,13 @@ var JSduino = (function (_JSduino_){
     var pinsGroups = []; //{id: p, group: groups[p]}
     var ledPower = null;
     var JSduinoContainer = null, containerParent = null;
-    //ÁREAS PARA EL CÓDIGO: GLOBAL, SETUP Y LOOP EN PRINCIPIO
+    //CODE ZONES: GLOBAL, SETUP Y LOOP AT FIRST
     var areas = ["Global", "Setup", "Loop"];
     //var _PINS_CREATED_ = {};
-    //UTILIZABLE EN JSduino.ino::
-    /** Array de los pines configurados a través de la función 'pinMode', que son los habilitados (en principio) para el códdigo.
-      * Una vez configurado el pin en la zona 'setup' no debería permitirsele reconfigurarse en otra parte del código, se le 
-      * debe mantener el modo establecido de inicio. */
+    //USED IN JSduino.ino::
+    /** Array of the pins configured through the 'pinMode' function, which are the ones enabled (in principle) for the code.
+      * Once the pin is configured in the 'setup' zone it should not be allowed to reconfigure in another part of the code, 
+      * it will be must maintain the set start mode. */
     var pinModeArray = [/*{id: 0, el: null, mode: null}*/];
     //TIMERs
     var timers = [];
@@ -200,25 +211,25 @@ var JSduino = (function (_JSduino_){
     
     
     //STATICs INTERNAL FUNCTIONS
-    /** Obtiene los datos almacenados en el elemento LI (BOTÓN-ACTUADOR). 
-      * Normalmente un array con el valor y el estado. (0 = select.value, 1= HIGH|LOW)
-      * El VALUE indica el número de pin asociado al botón, el STATE especifica si se
-      * encuentra en estado alto o bajo (HIGH | LOW) 
-      * @param li [HTMLLiElement] El BOTÓN-ACTUADOR del que obtener los datos.
-      * @return data [Array] Un Array (extraido del formato cadena) con los datos almacenados, 
-      * donde; data[0]=VALUE y data[1]=STATE. */
+    /** It obtains the data stored in the LI element (BUTTON-ACTUATOR).
+      * Normally an array with the value and status. (0 = select.value, 1 = HIGH | LOW)
+      * The VALUE indicates the pin number associated with the button, the STATE specifies if it is
+      * found in high or low state (HIGH | LOW)
+      * @param li [HTMLLiElement] The BUTTON-ACTUATOR from which to obtain the data.
+      * @return data [Array] An Array (extracted from the string format) with the stored data,
+      * where; data [0] = VALUE and data [1] = STATE. */
     function getData(li){
         return (li.data ? li.data.split(":") : null); //0 = select.value, 1= HIGH|LOW
     }
-    /** Establece los datos a almacenar en el elemento LI (BOTÓN-ACTUADOR). 
-      * Se guardará en forma de un array con formato texto, con el valor y el 
-      * estado. (0 = select.value, 1= HIGH|LOW)
-      * El VALUE indica el número de pin asociado al botón, el STATE especifica si se
-      * encuentra en estado alto o bajo (HIGH | LOW)
-      * @param li [HTMLLiElement] El BOTÓN-ACTUADOR al que añadir los datos.
-      * @param value [String] La cadena que representa el número de pin asociado.
-      * @param state [String] Una cadena representando el estado: HIGH, LOW.
-      * @return data [String] Una cadena (Array con formato cadena) con los datos almacenados. */
+    /** It establishes the data to be stored in the LI element (BUTTON-ACTUATOR).
+      * It will be saved in the form of an array with text format, with the value and
+      * state. (0 = select.value, 1 = HIGH | LOW)
+      * The VALUE indicates the pin number associated with the button, the STATE specifies if it is
+      * found in high or low state (HIGH | LOW)
+      * @param li [HTMLLiElement] The BUTTON-ACTUATOR to which to add the data.
+      * @param value [String] The string that represents the associated pin number.
+      * @param state [String] A string representing the state: HIGH, LOW.
+      * @return data [String] A string (Array with string format) with the stored data. */
     function setData(li, value, state){
         li.data = (value + ":" + state);
         return li.data;
@@ -229,13 +240,13 @@ var JSduino = (function (_JSduino_){
     }
     function getContainer(){ return JSduinoContainer; }
     
-    /** Se utiliza para cargar una configuración previamente guardada a través del objeto 'objectActuators' que 
-      * debe tener una estructura muy definida tal que así: 
+    /** It is used to load a previously saved configuration through the 'objectActuators' object that
+      * must have a very defined structure such that: 
         objectActuators = 
         {
-          INPUT:{ //UL ACTUADORES (INPUT, OUTPUT, LEVEL)
+          INPUT:{ //UL ACTUATORS (INPUT, OUTPUT, LEVEL)
                     id:        "buttonsInput",
-                    caption:   "ENTRADAS:<br />",
+                    caption:   "INPUTS:<br />",
                     className: "actuators input",
                     list: [   //lis
                             { //li actuator
@@ -256,11 +267,11 @@ var JSduino = (function (_JSduino_){
         if(!_JSduino_.ui.containers.Root){ return null; }
         var paper = _JSduino_.getPaper();
         btnLoad =  getGetSaved("chkLoad"); //_JSduino_.core.loadStore(2); //getGetSaved("btnLoad");
-        //Obtenemos el posible objeto 'objActuators' enviado por post.
+        //We obtain the possible object 'objActuators' sent by post/get.
         var objActuatorsSaved = btnLoad ? _JSduino_.core.loadStore(1) : null; //getPostSaved();
-        //Lo insertamos en el array general
+        //We insert it in the general array
         var objActuatorsAll = [objActuatorsSaved, objectActuators];
-        //Los procesamos, de tal forma que le damos prioridad a los pasados a través del método init()
+        //We process them, in such a way that we give priority to the past through the init() method
         for(var x=0; x<objActuatorsAll.length; x++){
             var objAct = objActuatorsAll[x];
             if(!objAct){ continue; }
@@ -270,21 +281,21 @@ var JSduino = (function (_JSduino_){
                     for(var i=0; i<obj.list.length; i++){ //list
                         var act = obj.list[i];          //act.id, act.type, act.mode, act.value, act.txt, act.className
                         deviceSel = act.type;
-                        var pin = _JSduino_.utils.getPinCompatible(act.id, [mode]); //Si hay alguno aprovechable se utiliza
-                        //Si no se encuentra se crea uno nuevo
-                        pin = pin ? pin : new _JSduino_.Pin(act.id, mode, null, null, true); //modo estricto
+                        var pin = _JSduino_.utils.getPinCompatible(act.id, [mode]); //If there is any usable it is used
+                        //If it is not found, a new one is created
+                        pin = pin ? pin : new _JSduino_.Pin(act.id, mode, null, null, true); //strict mode
                         if(!pin || pin.error){
-                            if(pin && pin.remove) { console.log("reloadOldState:: Borrado el pin temporal?... !" + (pin.remove() + "").toUpperCase() + "¡"); } //lo suprime del array genérico
+                            if(pin && pin.remove) { console.log("reloadOldState:: Borrado el pin temporal?... !" + (pin.remove() + "").toUpperCase() + "¡"); } //Suppresses it from the generic array
                             pin = null;
                             toC("ERROR en reloadOldState:: pin [" + act.id + "], Modo = '" + mode + "'. ¡ID o MODO erróneo!");
                             return null;
                         }
                         if(pin.mode !== mode) { pin.setMode(mode); }
-                        pin.er.attr("fill", "white"); //LO SEÑALA COMO ESTABLECIDO
-                        pin.setValue(0); //lo resetea
+                        pin.er.attr("fill", "white"); //IT SAYS IT AS ESTABLISHED
+                        pin.setValue(0); //to reset value
                         if(!_JSduino_.ino.getPinModeArrayById(pin.id)){ pinModeArray.push({id: pin.id, el: pin, mode: pin.mode}); }
                         console.log("reloadOldState():: pin [" + pin.id + "] == '" + pin.pinDef.aka + "', setted to Mode = '" + pin.mode + "'");
-                        //... fin de líneas en pinMode.
+                        //... end lines in pinMode.
                         if(pin){
                             var actNew = new _JSduino_.Actuator(pin, act.type);
                             if(actNew && actNew.pin && actNew.inputName && actNew.structure){
@@ -294,7 +305,7 @@ var JSduino = (function (_JSduino_){
                                 actNew.inputName.value = act.txt;
                                 actNew.notify(act.value);
                                 actNew.highlight(true);
-                                //actuators.push({id: act.id, act: actNew}); //ya lo hace la propia clase Actuator
+                                //actuators.push({id: act.id, act: actNew}); //already the Actuator class does it
                             } else {
                                 actNew.remove();
                                 actNew = null;
@@ -309,7 +320,7 @@ var JSduino = (function (_JSduino_){
     }
     /**/
     function getGetSaved(name){
-        var cadVariables = location.search.substring(1,location.search.length); //suprimimos ?
+        var cadVariables = location.search.substring(1,location.search.length); //delete ?
         var arrVariables = cadVariables.split("&");
         for (i=0; i<arrVariables.length; i++) {
             var partes = arrVariables[i].split("=");
@@ -321,8 +332,8 @@ var JSduino = (function (_JSduino_){
         return null;
     }
     
-    /** Establece el tamaño del canvas 'paper' SVG de JSduino.
-      * @param size {Object} Objeto de dimensiones para el 'paper' mostrado: {width: 360, height:240, viewBox: {x:0, y:0, w:260, h:320}}*/
+    /** Sets the size of the canvas 'paper' SVG of JSduino.
+      * @param size {Object} Dimensions object for the 'paper' shown: {width: 360, height: 240, viewBox: {x: 0, y: 0, w: 260, h: 320}} */
     function setSize(size){
         size = size ? size :  {}; //{width: 555, height:432, viewBox: {x:0, y:0, w:212, h:162}};
         var defaultWidth = 283, defaultHeight = 202, paper = _JSduino_.getPaper();
@@ -336,7 +347,7 @@ var JSduino = (function (_JSduino_){
         if(!viewBox){ //"0 0 " + (svgWidth/1.3) + " " + (svgHeight/1.3);
             viewBox = { x: 0, y: 0, w: (width/1.3), h: (height/1.3) };
         }
-        //REDIMENSIONAMOS EL OBJETO RAPHAEL:
+        //RESIZE THE RAPHAEL OBJECT:
         paper.setSize(width*2, height*2); //raphael
         paper.setViewBox(viewBox.x, viewBox.y, viewBox.w, viewBox.h, true);//raphael
     }
@@ -352,11 +363,11 @@ var JSduino = (function (_JSduino_){
         parent.insertBefore(el, sibling);
     }
     
-    /** Método Principal. Función de arranque y construcción de todo el sistema JSduino.
-      * Se embebe en el interior del evento 'DOMContentLoaded'.
-      * @param container {DOMElement} [OBLIGATORIO] Elemento del DOM contenedor de toda la interfaz JSduino. 
-      * @param size {Object} Objeto de dimensiones para el 'paper' mostrado: {x:0, y:0, w:260, h:320}
-      * @param objActuators {Object} Objeto con una estructura muy definida. (ver 'objectActuators')*/
+    /** Main Method Startup and construction function of the entire JSduino system.
+      * Embed inside the event 'DOMContentLoaded'.
+      * @param container {DOMElement} [MANDATORY] DOM element container of the entire JSduino interface.
+      * @param size {Object} Dimensions object for the 'paper' shown: {x: 0, y: 0, w: 260, h: 320}
+      * @param objActuators {Object} Object with a very defined structure. (see 'objectActuators')*/
     function init(container, size, objActuators){
         //UTILS
         //_JSduino_.utils.loadScript(scriptUTILS, null, true, {type: "text/javascript", async: true, defer: true}); //HEAD
@@ -388,7 +399,7 @@ var JSduino = (function (_JSduino_){
             container.appendChild(_JSduino_.ui.makeUI());
             
             container.classList.add("containerSVG");
-            toDo(_JSduino_.raphael.scan, null , 80); //espera que se cargue el script externo para incorporar su nombre de variable raphael 'jsvg' (paper)
+            toDo(_JSduino_.raphael.scan, null , 80); //wait for the external script to load to incorporate its variable name raphael 'jsvg' (paper)
             toDo(setSize, size, 100);
             //if(objActuators) { 
                 objectActuators = objActuators;
@@ -401,10 +412,10 @@ var JSduino = (function (_JSduino_){
         });
     }
 
-    /** Encapsula la función a realizar en un 'timeout' con un tiempo configurable de espera (por defecto 100 msg.); 
-      * también se le pueden entregar parámetros a la función.
-      * Este método es el que debe emplearse fuera de JSduino para la ejecución de código, pues asegura un tiempo mínimo 
-      * de espera para permitir que se haya cargado toda la interfaz. */
+    /** Encapsulates the function to be performed in a 'timeout' with a configurable wait time (default 100 msg.);
+      * Parameters can also be delivered to the function.
+      * <del>This method is the one that must be used outside of JSduino for code execution</del>, because it ensures a minimum time
+      * Waiting to allow the entire interface to be loaded. */
     function toDo(paramFunction, params, millis){
         setTimeout(paramFunction, (millis ? millis : 100), params);
     }
@@ -421,19 +432,18 @@ var JSduino = (function (_JSduino_){
     //PUBLIC API:
     Object.assign(_JSduino_, 
     {
-        _PAPER_RAPHAEL_: _PAPER_RAPHAEL_, //CONSTANTE ACCESIBLE DESDE EL RESTO DE MÓDULOS. Es el nombre de la variable que engloba el objeto Raphael.
-        _ID_SVG_: _ID_SVG_, //CONSTANTE ACCESIBLE DESDE EL RESTO DE MÓDULOS. Es el id del contenedor que engloba el objeto Raphael.
+        _PAPER_RAPHAEL_: _PAPER_RAPHAEL_, //ACCESSIBLE CONSTANT FROM THE REST OF MODULES. It is the name of the variable that includes the Raphael object.
+        _ID_SVG_: _ID_SVG_, //ACCESSIBLE CONSTANT FROM THE REST OF MODULES. It is the id of the container that includes the Raphael object.
         //RSVG: p_txt_mail,
-        //editArea: editAreaLoader, //NECESITA edit_area.js
+        //editArea: editAreaLoader, //NEED edit_area.js
         getLogo: function(){ return _JSduino_.objects.images.logo; },
         getImages: function(){ return _JSduino_.objects.images; },
         getSounds: function(){ return _JSduino_.objects.sounds; },
         getMusics: function(){ return _JSduino_.objects.musics; },
         getMute: function(){ return mute; },
         setMute: function(what){ mute = what; },
-        init: init, //punto de entrada principal del programa.
-        //reInit: reInit, //regeneración de la interfaz
-        toDo: toDo, //método normal para embeber todo el código HTML externo a ejecutar.
+        init: init, //Main entry point of the program.
+        toDo: toDo, //normal method to embed all the external HTML code to execute.
         preSetup: preSetup,
         setup: setup,
         loop: loop,
@@ -466,26 +476,26 @@ var JSduino = (function (_JSduino_){
     
 
 
-    //BEGIN:: MÓDULO JSduino.utils
-    /* Sub-Namespace 'utils' dentro del namespace 'JSduino'.
-     * Trata distintos effectos para aplicar a elementos tanto de la 
-     * interfaz gráfica de usuario como del propio 'core', pero que
-     * sean 'Objetos-Raphael' */
+    //BEGIN MODULE:: JSduino.utils
+    /** Sub-Namespace 'utils' inside the 'JSduino' namespace.
+      * Try different effects to apply to elements of both the
+      * graphical user interface as the 'core' itself, but that
+      * be 'Raphael-Objects' */
     _JSduino_.utils = (function (){
         //FROM UTILS.js 
-        /** Carga un link 'style' en el Padre indicado de la página, por defecto el HEAD.
-          * Como atributos se admiten la ruta, el objeto padre donde insertarlo (HEAD, BODY, ...)
-          * si incluirlo como primer hijo o no, un objeto de atributos, incluso una función de 
-          * callback cuando termine de cargarlo. */
+        /** Load a 'style' link in the indicated Parent of the page, by default the HEAD.
+          * As attributes the route is allowed, the parent object where to insert it (HEAD, BODY, ...)
+          * whether to include it as the first child or not, an object of attributes, including a function of
+          * callback when finished loading. */
         function loadStyle (href, parent, firstChild, attrs, nameCallback) {
             if(!href) { return null; }
             attrs = attrs || {};
             parent = parent || document.getElementsByTagName("head")[0];
             
-            // Crear elemento
+            // Create element
             var style = document.createElement("link");
-            // Atributos del script
-
+            
+            // script attributes
             for(var a in attrs){
                 if(attrs.hasOwnProperty(a)){
                     style.setAttribute(a, attrs[a]);
@@ -503,19 +513,19 @@ var JSduino = (function (_JSduino_){
             }
             return true;
         }
-        /** Carga un script en el Padre indicado de la página, por defecto el HEAD. 
-          * Como atributos se admiten la ruta, el objeto padre donde insertarlo (HEAD, BODY, ...)
-          * si incluirlo como primer hijo o no, un objeto de atributos, incluso una función de 
-          * callback cuando termine de cargarlo.*/
+        /** Load a script on the indicated Parent of the page, by default the HEAD.
+          * As attributes the route is allowed, the parent object where to insert it (HEAD, BODY, ...)
+          * whether to include it as the first child or not, an object of attributes, including a function of
+          * callback when finished loading.*/
         function loadScript (src, parent, firstChild, attrs, nameCallback) {
             if(!src) { return null; }
             attrs = attrs || {};
             parent = parent || document.getElementsByTagName("head")[0];
             
-            // Crear elemento
+            // Create element
             var script = document.createElement("script");
-            // Atributos del script
-
+            
+            // script attributes
             for(var a in attrs){
                 if(attrs.hasOwnProperty(a)){
                     script.setAttribute(a, attrs[a]);
@@ -532,19 +542,19 @@ var JSduino = (function (_JSduino_){
             }
             return true;
         }
-        /** Crea una etiqueta script en línea (no un archivo a cargar) en el Padre indicado de la página, por defecto el HEAD. 
-          * Como atributos se admiten el código en javascript, el objeto padre donde insertarlo (HEAD, BODY, ...)
-          * si incluirlo como primer hijo o no, un objeto de atributos, incluso una función de 
-          * callback cuando termine de cargarlo.*/
+        /** Create a script script online (not a file to load) in the indicated Parent of the page, by default the HEAD.
+          * As attributes the code in javascript is admitted, the parent object where to insert it (HEAD, BODY, ...)
+          * whether to include it as the first child or not, an object of attributes, including a function of
+          * callback when finished loading.*/
         function createScript (code, parent, firstChild, attrs, nameCallback) {
             if(!code) { return null; }
             attrs = attrs || {};
             parent = parent || document.getElementsByTagName("head")[0];
             
-            // Crear elemento
+            // Create element
             var script = document.createElement("script");
-            // Atributos del script
-
+            
+            // script attributes
             for(var a in attrs){
                 if(attrs.hasOwnProperty(a)){
                     script.setAttribute(a, attrs[a]);
@@ -568,8 +578,8 @@ var JSduino = (function (_JSduino_){
         function getMaxOfArray(numArray) {
           return Math.max.apply(null, numArray);
         }
-        /** Retorna el índice del valor más cercano en el array. El tercer parámetro nos permite indicar si deseamos
-          * (en caso de igualdad) el más cercano hacia arriba, o hacia abajo; por defecto hacia arriba. */
+        /** Returns the index of the closest value in the array. The third parameter allows us to indicate if we want
+          * (in case of equality) the closest up, or down; default up. */
         var getIndexFromNearest = function (value, arr, downUp) {
             var result = Math.abs(getMaxOfArray(arr)-value); //máx
             var index = -1;
@@ -585,8 +595,8 @@ var JSduino = (function (_JSduino_){
             return index;
         };
         /** FROM: MDM:: https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Math/random
-          * ENTERO:: Retorna un entero aleatorio entre min (incluido) y max <del>(excluido)</del>. ¡Usando Math.round() 
-          * te dará una distribución no-uniforme! */
+          * INTEGER :: Returns a random integer between min (included) and max <del> (excluded) </del>. Using Math.round()
+          * will give you a non-uniform distribution! */
         function getRandomInt(min, max) {
             max += 0.0000000001; //Para que máx esté incluido
             var max2 = Math.max(max, min);
@@ -594,11 +604,11 @@ var JSduino = (function (_JSduino_){
           return Math.floor(Math.random() * (max2 - min2)) + min2;
         }
         
-        /** Retorna otro array con los resultados coincidentes en ambos arrays de entrada, osea, 
-          * calcula su INTERSECCIÓN BOOLEANA. 
-          * Este método realiza una operación BOOLEANA DE CONJUNTOS, NO realiza OPERACIONES MATEMÁTICAS, 
-          * puesto que trata los arrays como conjuntos con elementos, no como valores matemáticos. 
-          * Emplea 'indexOf' y el valor de retorno depende de lo que pueda comparar esta función javascript. */
+        /** Returns another array with the matching results in both input arrays, that is,
+          * calculates your BOOLEAN INTERSECTION.
+          * This method performs a BOOLEAN SETS operation, DOES NOT perform MATH OPERATIONS,
+          * since it treats arrays as sets with elements, not as mathematical values.
+          * Use 'indexOf' and the return value depends on what you can compare this javascript function. */
         function arrIntersection(arr1, arr2){
             var arrResult = [];
             if(!arr1 || !arr2) { return arrResult; }
@@ -607,11 +617,11 @@ var JSduino = (function (_JSduino_){
             }
             return arrResult;
         }
-        /** Retorna otro array con los resultados NO coincidentes en ambos arrays de entrada, osea, 
-          * calcula su DIFERENCIACIÓN BOOLEANA. 
-          * Este método realiza una operación BOOLEANA DE CONJUNTOS, NO realiza OPERACIONES MATEMÁTICAS, 
-          * puesto que trata los arrays como conjuntos con elementos, no como valores matemáticos. 
-          * Emplea 'indexOf' y el valor de retorno depende de lo que pueda comparar esta función javascript. */
+        /** Returns another array with the results NOT matching in both input arrays, that is,
+          * calculates your BOOLEAN DIFFERENTIATION.
+          * This method performs a BOOLEAN SETS operation, DOES NOT perform MATH OPERATIONS,
+          * since it treats arrays as sets with elements, not as mathematical values.
+          * Use 'indexOf' and the return value depends on what you can compare this javascript function. */
         function arrDiferenciation(arr1, arr2){
             var arrResult = [];
             if(!arr1 || !arr2) { return arrResult; }
@@ -620,14 +630,14 @@ var JSduino = (function (_JSduino_){
             }
             return arrResult;
         }
-        /** Suprime elementos duplicados en el array. No modifica el array entregado, retorna un nuevo array. */
+        /** Deletes duplicate elements in the array. It does not modify the delivered array, it returns a new array. */
         function unique(arr){
             return arr.filter(function (currentValue, index, array) {
                 //try{ return (arr.slice(index+1).indexOf(currentValue) < 0); }catch(e){ return true; }
                 if((index+1) < array.length) { return (array.slice(index+1).indexOf(currentValue) < 0); } else { return true; }
             });
         }
-        /** Al igual que el método 'indexOf' busca valores conincidentes y retorna el índice, pero entre DOS ARRAYS. */
+        /** Just as the 'indexOf' method looks for matching values and returns the index, but between DOS ARRAYS. */
         function indexOfArray(arr1, arr2){
             var index = -1;
             if(!arr1 || !arr2) { return index; }
@@ -638,7 +648,7 @@ var JSduino = (function (_JSduino_){
             }
             return index;
         }
-        /** Retorna las claves (keys) principales de un objeto. */
+        /** Returns the main keys (keys) of an object. */
         function objGetKeys(obj){
             var keys = [];
             for(var o in obj){
@@ -650,9 +660,9 @@ var JSduino = (function (_JSduino_){
         }
         //END UTILS.js
         
-        /** Función de utilidad para limpiar el nombre pasado como parámetro para hacerlo compatible con un nombre de 
-          * variable javascript, eliminando espacios y otros caracteres no válidos. Por ejemplo es útil para los atributos 
-          * 'id' de los elementos que posteriormente se traducen a nombres de variables o propiedades de objetos. */
+        /** Utility function to clean the last name as a parameter to make it compatible with a name of
+          * javascript variable, eliminating spaces and other invalid characters. For example, it is useful for attributes
+          * 'id' of the elements that are subsequently translated into variable names or properties of objects. */
         function availableVarName(id){ return id.replace(/[\.\s\*-]/gi, id); }
         
         function getLedById(ledId){
@@ -717,8 +727,8 @@ var JSduino = (function (_JSduino_){
                 if(pinId == pin.id) { return pin.pin; }
             }
         }
-        /** Util en 'JSduino.ino', comprueba si este id de pin ya se encuentra establecido, 
-          * si es así lo retorna, sinó retorna 'null'*/
+        /** Useful in 'JSduino.ino', check if this pin id is already established,
+          * if so, return it, but return 'null'*/
         function getPinUsed(id){
             var pinModesArr = _JSduino_.getPinModeArray();
             for(var i=0; i<pinModesArr.length; i++){
@@ -736,17 +746,17 @@ var JSduino = (function (_JSduino_){
             }
             return null;
         }
-        /** Util en 'JSduino.ino', trata de obtener un pin que ya se encuentre establecido con ese id, 
-          * y que sea compatible con alguno de los modos propuestos; si es así lo retorna, sinó retorna 'null'.
-          * Primero busca en los ya creados (y compatibles) por orden en el array de 'pinModes' y sinó en el 
-          * de 'actuators'*/
+        /** Useful in 'JSduino.ino', try to get a pin that is already established with that id,
+          * and that is compatible with any of the proposed modes; if so, it returns, but returns 'null'.
+          * First look at those already created (and compatible) by order in the 'pinModes' array and in the
+          * from 'actuators'*/
         function getPinCompatible(id, modes){
-            //TIENE PREFERENCIA EL ARRAY 'pinModes'
+            //THE ARRAY 'pinModes' HAS PREFERENCE
             var pin = _JSduino_.utils.getPinUsed(id);
             //pin = pin ? (modes.indexOf(pin.mode) ? pin : null) : null;
-            //si se encuentra ya asignado a otro actuador, lo utiliza
+            //If it is already assigned to another actuator, use it
             pin = _JSduino_.utils.getPinCompatibleWithActuatorsModes(pin);
-            //Si ya existe el pin definido por 'pinMode', lo utiliza
+            //If the pin defined by 'pinMode' already exists, use it
             pin = _JSduino_.utils.getPinCompatibleWithPinModes(pin, modes);
             return pin;
         }
@@ -786,7 +796,7 @@ var JSduino = (function (_JSduino_){
             for(var i=0; i<pines.length; i++){ if(!pines[i].pin){ indexes.push(i); } } //detecta los null
             for(var i=0; i<indexes.length; i++){ pines.splice(indexes[i], 1); } //los suprime
         }
-        /** Comprueba si el 'id' del SVGElement creado por el 'pin' tiene un 'actuador' asociado*/
+        /** Check if the 'id' of the SVGElement created by the 'pin' has an associated 'actuator' */
         function hasActuator(id){
             cleanActuators();
             for(var i=0; i<actuators.length; i++){
@@ -801,13 +811,13 @@ var JSduino = (function (_JSduino_){
             for(var i=0; i<actuators.length; i++){ if(!actuators[i].act){ indexes.push(i); } } //detecta los null
             for(var i=0; i<indexes.length; i++){ actuators.splice(indexes[i], 1); } //los suprime
         }
-        /** Construye un objeto de actuadores como un objeto de guardado especial compatible con el tipo 'objectActuators' que 
-          * debe tener una estructura muy definida tal que así: 
+        /** It makes an actuator object as a special saved object compatible with the 'objectActuators' type that
+          * must have a very defined structure such that: 
         objectActuators = 
         {
           INPUT:{ //UL ACTUADORES (INPUT, OUTPUT, LEVEL)
                     id:        "buttonsInput",
-                    caption:   "ENTRADAS:<br />",
+                    caption:   "INPUTS:<br />",
                     className: "actuators input",
                     list: [   //lis
                             { //li actuator
@@ -825,13 +835,13 @@ var JSduino = (function (_JSduino_){
         }
         */
         function makeObjectActuators(actuators){
-            var inputs = { //Actuadores
+            var inputs = { //Actuators
                 id:        "buttonsInput",
                 caption:   "ENTRADAS:<br />",
                 className: "actuators input",
                 list:       []
             };
-            var outputs = { //Receptores
+            var outputs = { //Receptors
                 id:        "buttonsOutput",
                 caption:   "SALIDAS:<br />",
                 className: "switches output",
@@ -846,7 +856,7 @@ var JSduino = (function (_JSduino_){
             return objActuators;
         }
         
-        //NOTIFICACIONES PARA PINES DE SALIDA
+        //NOTIFICATIONS FOR OUTPUT PINS
         function update(upd){
             cleanActuators();
             for(var i=0; i<actuators.length; i++){
@@ -858,7 +868,7 @@ var JSduino = (function (_JSduino_){
         //updater.addEventListener("change", function (){ update(this); });
         
         //COOKIES: FROM: 
-        /** Intenta guardar la información en cookies, si no se pudiese se guardará en 'localStorage' */
+        /** Try to save the information in cookies, if it could not be saved in 'localStorage' */
         function setCookieStorage(cname, cvalue, exdays, path) {
             //if(!cvalue){ return false; }
             cname = cname || "JSduino_save";
@@ -879,7 +889,7 @@ var JSduino = (function (_JSduino_){
             }
             return true;
         }
-        /** Intenta obtener la información de cookies, si no se pudiese se intentará de 'localStorage' */
+        /** Try to get the information of cookies, if it could not be tried of 'localStorage' */
         function getCookieStorage(cname) {
             //if(!hasCookie){ return false; }
             var name = (cname || "JSduino_save") + "=";
@@ -903,7 +913,7 @@ var JSduino = (function (_JSduino_){
             }
             return null;
         }
-        /** Comprueba si hay cookies, si no se pudiese se comprobará 'localStorage' */
+        /** Check if there are cookies, if you can not check 'localStorage' */
         function hasCookieStorage(cname) {
             var name = getCookieStorage(cname || "JSduino_save");
             //alert((name === false) + ":" + (name===""));
@@ -918,7 +928,7 @@ var JSduino = (function (_JSduino_){
             }
             return false;
         }
-        /** Intenta borrar la información de las cookies, si no se pudiese se borrará de 'localStorage' */
+        /** Try to delete the information of the cookies, if it could not be deleted from 'localStorage' */
         function removeCookieStorage(cname, path) {
             //if(!cvalue){ return false; }
             cname = cname || "JSduino_save";
@@ -941,7 +951,7 @@ var JSduino = (function (_JSduino_){
         }
         
         //LOCAL-STORAGE:
-        /** Guardará la información en 'localStorage' */
+        /** Save the information in 'localStorage' */
         function setLocalStorage(sname, svalue){
             //localStorage.setItem("lastname", "Smith"); //localStorage.getItem("lastname"); //localStorage.removeItem("lastname");
             //if(!svalue){ return false; }
@@ -960,7 +970,7 @@ var JSduino = (function (_JSduino_){
             }
             return true;
         }
-        /** Obtendrá la información de 'localStorage'. PROBLEMAS CON PROTOCOLO 'file://' */
+        /** You will get the information of 'localStorage'. PROBLEMS WITH 'file: //' PROTOCOL */
         function getLocalStorage(sname){
             //localStorage.setItem("lastname", "Smith"); //localStorage.getItem("lastname"); //localStorage.removeItem("lastname");
             //if(!svalue){ return false; }
@@ -973,7 +983,7 @@ var JSduino = (function (_JSduino_){
                 }catch(e){
                     console.log("JSduino.utils->getLocalStorage():: Error en 'localStorage', probando con 'Storage.valueOf()' .. " + e);
                     /*
-                    //PROVOCA UNA REDIRECCIÓN:::
+                    //CAUSES A REDIRECTION:::
                     var l, p;
                     !localStorage && (l = location, p = l.pathname.replace(/(^..)(:)/, "$1$$"), (l.href = l.protocol + "//127.0.0.1" + p));*/
                     svalue = b642utf8(window.Storage.valueOf(sname));
@@ -984,7 +994,7 @@ var JSduino = (function (_JSduino_){
             }
             return svalue;
         }
-        /** Intenta borrar la variable pasada del 'localStorage' */
+        /** Try to delete the last variable of the 'localStorage' */
         function removeLocalStorage(sname){
             //localStorage.setItem("lastname", "Smith"); //localStorage.getItem("lastname"); //localStorage.removeItem("lastname");
             //if(!svalue){ return false; }
@@ -1005,10 +1015,10 @@ var JSduino = (function (_JSduino_){
             return svalue;
         }
         
-        //BASE64: Codifica/decodifica la cadena a base64 escapando primero la cadena.
-        /** BASE64: Codifica la cadena a base64 escapandola primero. 
-          * ATENCIÓN: Por problemas cross-browser con 'btoa' y 'atob' (aunque generalizadas, en realidad son soluciones Mozilla) 
-          * se ha optado por BASE64. */
+        //BASE64:Encode / decode the string to base64 by first escaping the string.
+        /** BASE64: Encode the base64 string by escaping it first.
+          * ATTENTION: Due to cross-browser problems with 'btoa' and 'atob' (although generalized, they are actually Mozilla solutions)
+          * BASE64 has been chosen. */
         function utf82b64( str ) {
             str = str || "";
             var resultado;
@@ -1020,9 +1030,9 @@ var JSduino = (function (_JSduino_){
             }
             return resultado;
         }
-        /** BASE64: Decodifica y escapa la cadena en base64. 
-          * ATENCIÓN: Por problemas cross-browser con 'btoa' y 'atob' (aunque generalizadas, en realidad son soluciones Mozilla) 
-          * se ha optado por BASE64.*/
+        /** BASE64: Decode and escape the string in base64.
+          * ATTENTION: Due to cross-browser problems with 'btoa' and 'atob' (although generalized, they are actually Mozilla solutions)
+          * BASE64 has been chosen.*/
         function b642utf8( strB64 ) {
             strB64 = strB64 || "";
             var resultado;
@@ -1080,7 +1090,7 @@ var JSduino = (function (_JSduino_){
     //END MODULE: JSduino.utils
     
     //BEGIN MODULE: JSduino.objects
-    /* Sub-Namespace 'objects' dentro del namespace 'JSduino'. */
+    /** Sub-Namespace 'objects' inside the 'JSduino' namespace. */
     _JSduino_.objects = (function (){
         var musics = (function _musics(){
             return {
@@ -1129,16 +1139,16 @@ var JSduino = (function (_JSduino_){
     //END MODULE: JSduino.objects
     
     //BEGIN MODULE: JSduino.events
-    /* Sub-Namespace 'events' dentro del namespace 'JSduino'.
-     * Trata los distintos eventos para elementos tanto de la 
-     * interfaz gráfica de usuario como del propio 'core' */
+    /** Sub-Namespace 'events' inside the 'JSduino' namespace.
+      * Treat the different events for elements of both the
+      * Graphical user interface as of the own 'core' */
     _JSduino_.events = (function (){
         //FROM UTILS.js 
-        /** Polifill cross-browser para los manejadores de eventos.
-          * @param el {DOMElement} [DEFAULT: <b>document</b>] El elemento sobre el que aplicar el evento
-          * @param eventName {string} [DEFAULT: "DOMContentLoaded"] Nombre del evento a manejar (sin el prefijo "on")
-          * @param fn {function} Función a implementar en el evento pasado 
-          * @param bubble {boolean} permite el efecto burbuja en la cadena de eventos */
+        /** Polyfill cross-browser for event handlers.
+          * @param el {DOMElement} [DEFAULT: <b> document </b>] The element on which to apply the event
+          * @param eventName {string} [DEFAULT: "DOMContentLoaded"] Name of the event to be handled (without the prefix "on")
+          * @param fn {function} Function to implement in the last event
+          * @param bubble {boolean} allows the bubble effect in the chain of events */
         function addEvent(el, eventName, fn, bubble){
             el = el ? el : document;
             eventName = eventName ? eventName : "DOMContentLoaded";
@@ -1146,12 +1156,12 @@ var JSduino = (function (_JSduino_){
             
             function toEvent(el, eventName, fn, bubble){
                 var eventNameCapitalized = (eventName.charAt(0).toUpperCase() + eventName.slice(1));
-                if(el.addEventListener){ //Casi todos
+                if(el.addEventListener){ //Almost every
                     el.addEventListener(eventName, fn, bubble);
                     return true;
                 } else if(el.attachEvent){ //Microsoft
                     return el.attachEvent("on" + eventNameCapitalized, fn);
-                } else { // resto navegadores
+                } else { //rest of browsers ??
                     try{
                         el["on"+eventName] = fn;
                         return true;
@@ -1164,23 +1174,23 @@ var JSduino = (function (_JSduino_){
             
             return toEvent(el, eventName, fn);
         }
-        /** Polifill cross-browser para eliminar manejadores de eventos.
-          * @param el {DOMElement} [DEFAULT: <b>document</b>] El elemento al que suprimir el evento
-          * @param eventName {string} [DEFAULT: "DOMContentLoaded"] Nombre del evento a suprimir (sin el prefijo "on")
-          * @param fn {Function} Función (HANDLER) a desconectar del evento pasado
-          * @param useCapture {boolean} Debe ser igual al parámetro "bubble" pasado al crearlo.
+        /** Polyfill cross-browser to eliminate event handlers.
+          * @param el {DOMElement} [DEFAULT: <b> document </b>] The element to delete the event
+          * @param eventName {string} [DEFAULT: "DOMContentLoaded"] Name of the event to be deleted (without the prefix "on")
+          * @param fn {Function} Function (HANDLER) to disconnect from the last event
+          * @param useCapture {boolean} Must be equal to the "bubble" parameter passed when created.
           */
         function removeEvent(el, eventName, fn, useCapture){
             el = el ? el : document;
             eventName = eventName ? eventName : "DOMContentLoaded";
             useCapture = (useCapture === undefined) ? false : useCapture;
             var eventNameCapitalized = (eventName.charAt(0).toUpperCase() + eventName.slice(1));
-            if(el.removeEventListener){ //Casi todos
+            if(el.removeEventListener){ //Almost every
                 el.removeEventListener(eventName, fn, useCapture);
                 return true;
             } else if(el.detachEvent){ //Microsoft
                 return el.detachEvent("on" + eventNameCapitalized, fn);
-            } else { // resto navegadores
+            } else { // rest of browsers ??
                 try{
                     el["on"+eventName] = undefined;
                     return true;
@@ -1191,10 +1201,10 @@ var JSduino = (function (_JSduino_){
             }
             //removeEventListener(event.type, nombredelafuncion)
         }
-        /** Dispara un evento por su nombre sobre un elemento dado. 
-          * @param el {DOMElement} [DEFAULT: <b>document</b>] El elemento sobre el que disparar el evento
-          * @param eventName {string} [DEFAULT: "click"] Nombre del evento a disparar (sin el prefijo "on")
-          * @param props {object} [OPTIONAL] [DEFAULT: {'bubbles': true, 'cancelable': true}] Objeto opcional de propiedades a pasar al evento */
+        /** Shoot an event by its name on a given item.
+          * @param on {DOMElement} [DEFAULT: <b> document </b>] The element on which to trigger the event
+          * @param eventName {string} [DEFAULT: "click"] Name of the event to be triggered (without the prefix "on")
+          * @param props {object} [OPTIONAL] [DEFAULT: {'bubbles': true, 'cancelable': true}] Optional properties object to be passed to the event */
         function simulateEvent(el, eventName, props) {
             el = el ? el : document;
             eventName = eventName ? eventName : "click";
@@ -1218,9 +1228,9 @@ var JSduino = (function (_JSduino_){
         }
         //END UTILS.js
         
-        // MANTIENE UN CONTROL SOBRE LOS EVENTOS ASIGNADOS A CADA OBJETO MEDIANTE UN ARRAY DE LISTENERS
-        // PERMITIENDO SÓLO UN ÚNICO EVENTO DEL MISMO TIPO PARA CADA ELEMENTO.
-        // EL ÚLTIMO EVENTO DEL MISMO TIPO SOBREESCRIBIRÁ AL ANTERIOR EN EL ARRAY.
+        // KEEP A CONTROL ON THE EVENTS ALLOCATED TO EACH OBJECT THROUGH AN ARRAY OF LISTENERS
+        // ALLOWING ONLY ONE SINGLE EVENT OF THE SAME TYPE FOR EACH ELEMENT.
+        // THE LAST EVENT OF THE SAME TYPE WILL OVERWRITE THE PREVIOUS IN THE ARRAY.
         function hasListener(el, eventType){
             for(var i=0; i<listeners.length; i++){
                 list = listeners[i]; //{el: DOMElement, eventType: 'click', handler: function_handler, bubble: true}
@@ -1237,7 +1247,7 @@ var JSduino = (function (_JSduino_){
             }
         }
         function setListener(el, eventType, handler, bubble){
-            //SELLO SI NO DISPONE DE ID
+            //A SEAL, IF YOU DO NOT HAVE ID
             var abc = "abcdefghijklmnopqrstuvwxyz";
             var rnd = abc[_JSduino_.utils.getRandomInt(0, abc.length-1)] + "_" + _JSduino_.utils.getRandomInt(10000, 100000);
             el.id = el.id ? el.id : rnd;
@@ -1263,7 +1273,7 @@ var JSduino = (function (_JSduino_){
             }
         }
         
-        //POLIFILL de ev.target para IE
+        //IE POLYFILL FOR ev.target 
         function getTarget(ev){
             function isEvent(ev){
                 var evTarget = ((ev.target || ev.srcElement) ? ev : undefined);
@@ -1272,21 +1282,6 @@ var JSduino = (function (_JSduino_){
             return (isEvent(ev) ? (ev.target || ev.srcElement) : ev);
         }
         
-        //HANDLERs
-        /*function clearClick(ev){
-            _JSduino_.core.clear();
-        }
-        function resetClick(ev){
-            _JSduino_.core.reset();
-        }
-        function startStopClick(ev){
-            if(ledPower.innerHTML == "O"){
-                _JSduino_.core.start();
-            } else if(ledPower.innerHTML == "I"){
-                _JSduino_.core.stop();
-            }
-        }*/
-        
         //PUBLIC API:
         return {
             addEvent: addEvent,
@@ -1294,12 +1289,6 @@ var JSduino = (function (_JSduino_){
             simulateEvent: simulateEvent,
             
             getTarget: getTarget,
-            //switcheMouseDown: switcheMouseDown,
-            //switcheMouseUp: switcheMouseUp,
-            //selectChange: selectChange,
-            //clearClick: clearClick,
-            //resetClick: resetClick,
-            //startStopClick: startStopClick,
             getListeners: function(){ return listeners; },
             setListener: setListener,
             removeListener: removeListener,
@@ -1310,13 +1299,13 @@ var JSduino = (function (_JSduino_){
     //END MODULE: JSduino.events
     
     //BEGIN MODULE: JSduino.effects
-    /* Sub-Namespace 'effects' dentro del namespace 'JSduino'.
-     * Trata distintos effectos para aplicar a elementos tanto de la 
-     * interfaz gráfica de usuario como del propio 'core', pero que
-     * sean 'Objetos-Raphael' */
+    /** Sub-Namespace 'effects' inside the 'JSduino' namespace.
+      * Try different effects to apply to elements of both the
+      * graphical user interface as the 'core' itself, but that
+      * be 'Objects-Raphael' */
     _JSduino_.effects = (function (){
         //FROM UTILS.js
-        /** Borra un elemento del DOM con efecto incorporado */
+        /** Delete an element of the DOM with built-in effect */
         function remove(el){
             //alert("qitando elemento... " + el);
             el.style.visibility = "hidden";
@@ -1332,7 +1321,7 @@ var JSduino = (function (_JSduino_){
             }, false);
             _JSduino_.events.simulateEvent(el, "hover");
         }
-        /** Muestra un elemento del DOM con efecto incorporado */
+        /** Displays a DOM element with built-in effect */
         function show(el, withWidth, widthRelative){
             _WIDTH_SHOW_ = 0;
             withWidth = (withWidth == undefined) ? true : withWidth;
@@ -1341,47 +1330,27 @@ var JSduino = (function (_JSduino_){
             el.style.display = "block";
             el.style.opacity = "0.2";
             el.style.right = "0";
-            //el.style.width = (el.offsetWidth/4) + "px";
-            //el.style.width = (el.offsetWidth*0.93) + "px";
             
             if(withWidth){ 
                 var w = parseInt(el.offsetWidth);
                 //alert(w);
                 w = w + w*0.40;
-                //alert(w);
-                //el.style.width = el.offsetWidth + "px";
                 el.style.width = w + "px";
             }
-            //if(withWidth){ el.style.width = "20px"; }
             el.style.transition = "all 0.6s";
             _JSduino_.events.addEvent(el, "hover", function(ev){
                 ev.target.style.opacity = "1";
-                //ev.target.style.right = "30%";
-                //if(withWidth){ ev.target.style.width = (_WIDTH_SHOW_ + ev.target.offsetWidth) + "px"; }
                 el.style.width = widthRelative ? widthRelative : ("100%");
             });
             _JSduino_.events.simulateEvent(el, "hover");
         }
-        /** Oculta un elemento del DOM con efecto incorporado */
+        /** Hides a DOM element with built-in effect */
         function hide(el, withWidth, widthRelative){
             withWidth = (withWidth == undefined) ? true : withWidth;
             //el.style.transition = "opacity 1s linear";
             el.style.visibility = "visible";
             el.style.display = "block";
             el.style.opacity = "1";
-            //el.style.right = "33%";
-            
-            //if(withWidth){ el.style.width = "30%"; }
-            //if(withWidth){ el.style.width = "20px"; }
-            /*if(withWidth){ 
-                //ev.target.style.width = "20%";
-                var w = parseInt(el.offsetWidth);
-                //alert(w);
-                w = w - w*0.20;
-                //alert(w);
-                //el.style.width = el.offsetWidth + "px";
-                el.style.width = w + "px";
-            }*/
             el.style.width = widthRelative ? widthRelative : ("80%");
             el.style.transition = "all 0.6s";
             _JSduino_.events.addEvent(el, "hover", function(ev){
@@ -1393,8 +1362,6 @@ var JSduino = (function (_JSduino_){
                     var w = parseInt(el.offsetWidth);
                     //alert(w);
                     w = w - w*0.40;
-                    //alert(w);
-                    //el.style.width = el.offsetWidth + "px";
                     el.style.width = w + "px";
                 }
             });
@@ -1405,7 +1372,8 @@ var JSduino = (function (_JSduino_){
         
         //MINI-CLASE PARA Glow-bear
         var Glower = (function(){
-            /** CONSTRUCTOR:: elemento tipo 'raphael', y los atributos a cambiar del efecto 'glow' (fill, color, ...). */
+            /** @constructor 
+              * CONSTRUCTOR :: item type 'raphael', and the attributes to change the 'glow' effect (fill, color, ...). */
             function Glower(elRaphael, objAttr){
                 this.elRaphael = elRaphael;
                 this.objAttr = objAttr;
@@ -1420,11 +1388,11 @@ var JSduino = (function (_JSduino_){
                 if(this.glow) { this.glow.remove(); this.glow = null; }
                 return this;
             }
-            /** Efecto Parpadeo (sólo del desenfoque). Permite especificar como parámetros la cantidad de parpadeos, 
-              * el lapsus entre ellos y su estado final. 
-              * @param count {number} número de parpadeos deseados. 
-              * @param lapsus {number} milisegundos de pausa entre parpadeos. (aproximadamente)
-              * @param onOff {boolean} Estado final: TRUE=ON, FALSE=OFF */
+            /** Flicker effect (only of blur). It allows to specify as parameters the number of blinks,
+              * the lapse between them and their final state.
+              * @param count {number} number of blinks desired.
+              * @param lapsus {number} milliseconds of pause between blinks. (approximately)
+              * @param onOff {boolean} End state: TRUE = ON, FALSE = OFF */
             Glower.prototype.blink = function(count, lapsus, onOff){
                 count = count || 0;
                 lapsus = lapsus || 200;
@@ -1442,11 +1410,12 @@ var JSduino = (function (_JSduino_){
             return Glower;
         })();
 
-        //MINI-CLASE PARA ENCENDIDO/APAGADO/PARPADEO DE LOS LEDs
+        //MINI-CLASS FOR ON / OFF / FLASHING OF LEDS
         var LEDer = (function(){
-            /** CONSTRUCTOR:: el objeto 'paper' apuntando a 'Raphael', el nombre del led (ej: "led_on"), 
-              * atributos a cambiar del cuerpo principal y la máscara (ej: {main: {"fill": "yellow"}, 
-              * mask: {"fill": "green"}}), y los atributos (si se desean) para el efecto 'glow'. */
+            /** @constructor 
+              * CONSTRUCTOR :: the object 'paper' pointing to 'Raphael', the name of the led (ex: "led_on"),
+              * attributes to change main body and mask (ex: {main: {"fill": "yellow"},
+              * mask: {"fill": "green"}}), and the attributes (if desired) for the 'glow' effect. */
             function LEDer(paper, nameLED, objAttr, attrGlow){
                 this.paper = paper;
                 this.objLED = {
@@ -1489,11 +1458,11 @@ var JSduino = (function (_JSduino_){
                 if(this.glower) { this.glower.off(); }
                 return this;
             }
-            /** Efecto Parpadeo (puede incluir también el del desenfoque). Permite especificar como parámetros 
-              * la cantidad de parpadeos, el lapsus entre ellos y su estado final. 
-              * @param count {number} número de parpadeos deseados. 
-              * @param lapsus {number} milisegundos de pausa entre parpadeos. (aproximadamente)
-              * @param onOff {boolean} Estado final: TRUE=ON, FALSE=OFF */
+            /** Flicker effect (may also include the blur). Allows you to specify as parameters
+              * the number of blinks, the slip between them and their final state.
+              * @param count {number} number of blinks desired.
+              * @param lapsus {number} milliseconds of pause between blinks. (approximately)
+              * @param onOff {boolean} End state: TRUE = ON, FALSE = OFF */
             LEDer.prototype.blink = function(count, lapsus, onOff){
                 count = count || 0;
                 lapsus = lapsus || 200;
@@ -1529,8 +1498,7 @@ var JSduino = (function (_JSduino_){
     //END MODULE: JSduino.effects
     
     //BEGIN MODULE CLASS: JSduino.Code
-    /* Class 'Code' dentro del namespace 'JSduino'.
-     * Trata de construir la interfaz de usuario */
+    /** 'Code' Class inside the 'JSduino' namespace. Perform operations with the code */
     _JSduino_.Code = (function (){
         var txt;
         function create(_super, codeArea){
@@ -1550,12 +1518,7 @@ var JSduino = (function (_JSduino_){
             
         }
         Code.prototype.evaluate = function _evaluate(){
-            //alert("CODE->EVALUATE:: " + typeof(this) + " :: \n" + txt + " :: \n" + this.document + " :: \n" + this.codeArea);
-            //_JSduino_.core.A.toConsole("CODE->EVALUATE:: ", eval.call(this, this.codeArea.value));
-            //_JSduino_.core.A.toConsole("CODE->EVALUATE:: ", eval(txt));
-            //_JSduino_.core.A.toConsole("CODE->EVALUATE:: ", eval.call(this._super, this.codeArea.value));
-            /**/
-            //sustitución de 'eval'
+            //'eval' sustitution
             var tmpFunc = new Function(this.codeArea.value);
             alert("CODE->EVALUATE:: Preparado para ejecutar función semi-eval");
             this._super.A.toConsole("CODE->EVALUATE: RESULTADO:: " + tmpFunc.call(this._super));
@@ -1564,42 +1527,37 @@ var JSduino = (function (_JSduino_){
         }
         Code.prototype.evalGlobal = function _evalGlobal(){
             var code = "this.global(function(){" + this.codeArea.value + "})";
-            //sustitución de 'eval'
+            //'eval' sustitution
             var tmpFunc = new Function(code);
             //alert("CODE->EVAL-GLOBAL:: Preparado para ejecutar función semi-eval");
             this._super.A.toConsole("CODE->EVAL-GLOBAL: RESULTADO:: " + tmpFunc.call(this._super));
         }
         Code.prototype.evalSetup = function _evalSetup(){
             var code = "this.setup(function(){" + this.codeArea.value + "})";
-            //sustitución de 'eval'
+            //'eval' sustitution
             var tmpFunc = new Function(code);
             //alert("CODE->EVAL-SETUP:: Preparado para ejecutar función semi-eval");
             this._super.A.toConsole("CODE->EVAL-SETUP: RESULTADO:: " + tmpFunc.call(this._super));
         }
         Code.prototype.evalLoop = function _evalLoop(){
             var code = "this.loop(function(){" + this.codeArea.value + "})";
-            //sustitución de 'eval'
+            //'eval' sustitution
             var tmpFunc = new Function(code);
             //alert("CODE->EVAL-LOOP:: Preparado para ejecutar función semi-eval");
             this._super.A.toConsole("CODE->EVAL-LOOP: RESULTADO:: " + tmpFunc.call(this._super));
             
         }
-        /*
-        Code.prototype.loop = function(pars){
-            alert("CODE->LOOP:: " + pars);
-            this._super.loop(pars);
-        }*/
         
-        //MÉTODOS ESTÁTICOS:
-        /** Extrae las funciones ("FunctionDeclaration" no "FunctionExpression") del código pasado.
-          * Retorna una cadena con todas las funciones encontradas en el código. */
+        //STATIC METHODS:
+        /** Extract the functions ("FunctionDeclaration" not "FunctionExpression") of the passed code.
+          * Returns a string with all the functions found in the code. */
         Code.getCodeFunctions = function _getCodeFunctions(code){
             //PARSE AND CLEAN
             var codeGen = "";
-            //ANALIZA Y DEPURA EL CÓDIGO CON ACORN Y ESCODEGEN, CON WALK LO MODIFICAMOS
+            //PARSE AND DEBUG THE CODE WITH ACORN AND ESCODEGEN, WITH WALK WE MODIFY IT
             if(acorn){
                 if(!acorn.walk){ return "'?'";}
-                //PARSEAMOS, LIMPIAMOS Y OPTIMIZAMOS
+                //WE PARSE, CLEAN AND OPTIMIZE
                 var acornOptions = {
                     ecmaVersion: 6,
                     sourceType: "script" //"module"
@@ -1612,40 +1570,10 @@ var JSduino = (function (_JSduino_){
                       //bs += (node.name + " :: " + node.value + "; ");
                       //console.log(node.id.name);
                       arrFunctions.push(node);
-                  }/*,
-                  BlockStatement: function b(node){
-                      //bs += (node.name + " :: " + node.value + "; ");
-                  },*/
-                  /*VariableDeclaration: function(node) {
-                    //if (node.kind == "let" || node.kind == "const") features.lexicalDecl = true;
-                    varDecl += (node.kind + ",");
-                  },
-                  VariableDeclarator: function(node) {
-                    //if (node.kind == "let" || node.kind == "const") features.lexicalDecl = true;
-                    varDecl += (node.kind + ",");
-                    varDecl.push();
-                  },
-                  TemplateLiteral: function(node) { 
-                    tmplLiteral += (node.kind + "," + node.value);
-                  },
-                  Identifier: function(node) {
-                    idd += (node.kind + " :: " + node.name + " :: " + node.value + ",");
-                  }*/
+                  }
                 });
-                /*console.log( acorn.walk.findNodeAt(ast, null, null, function b(nodeType, node){
-                    if(nodeType == "FunctionDeclaration") { 
-                        //bs += (nodeType + " :1: " + node.kink + " :2:" + node.name + " :3: " + node.value  + " :4: " + node.raw + "; ");
-                        //bs += (node.parentNode + " :id: " + node.id.name + " :3: " + node.value  + " :4: " + node.raw + "; ");
-                        //arrFunctions.push(node);
-                    }
-                }) );*/
                 ast = acorn.parse("");
                 ast.body = arrFunctions;
-                //console.log("BlockStatement :: " + bs);
-                /*console.log("VariableDeclarations :: " + varDecl);
-                console.log("TemplateLiteral :: " + tmplLiteral);
-                console.log("Identifier :: " + idd);*/
-                
                 
                 if(escodegen){
                     codeGen = escodegen.generate(ast);
@@ -1655,18 +1583,18 @@ var JSduino = (function (_JSduino_){
             
             return codeGen;
         }
-        /** Obtiene, trata y retorna el código pasado (se supone que será el valor de un 'textarea'). 
-          * Puede parsearse, optimizarse (suprimir comentarios), e incluir nuevos ámbitos o variables. 
-          * También se utiliza para embeber en el código unas funciones de ralentización.
-          * Este código se supone que se utilizará para embeber dentro de las funciones: 'preSetup', 'setup' o 'loop' */
+        /** It obtains, tries and returns the past code (it is supposed to be the value of a 'textarea').
+          * Can be parsed, optimized (delete comments), and include new areas or variables.
+          * It is also used to embed some slowdown functions in the code.
+          * This code is supposed to be used to embed within the functions: 'preSetup', 'setup' or 'loop' */
         Code.getCode = function _getCode(code, parse, ralentizar){
-            /* IDEA: inferir funciones genéricas que llamen a las funciones JSArduino sin tener que prefijarlas con 'A'*/
+            /* IDEA: infer generic functions that call the JSArduino functions without having to prefix them with 'A' */
             parse = (((typeof parse)+"") == "undefined") ? true : parse;
-            //MODIFICAR EL CÓDIGO FUENTE PARA MANIPULARLO LÍNEA A LÍNEA
+            //MODIFY THE SOURCE CODE TO MANIPULATE IT LINE TO LINE
             var linesSplit = code.split("\n");
             
-            linesSplit.unshift("V.setLooping(true);");  //primera línea de código
-            linesSplit.push("V.setLooping(false);");    //última línea de código
+            linesSplit.unshift("V.setLooping(true);");  //first code line
+            linesSplit.push("V.setLooping(false);");    //last code line
             //param_func_loop = new Function("(function(" + params_others_loop + "){var V = JSduino.V();var A = JSduino.A();" + codeAreaLoop.value + "})()");
             
             if(parse){ 
@@ -1675,30 +1603,28 @@ var JSduino = (function (_JSduino_){
                 code = Code.ralentizar(linesSplit.join("\n"), true);
             }
             
-            //RECONSTRUYE LA SALIDA DE CÓDIGO INCLUYENDO LOS OBJETOS 'V' y 'A'
+            //REBUILD THE CODE OUTPUT INCLUDING THE 'V' AND 'A' OBJECTS
             linesSplit = [];
             linesSplit.push("(function(){var V = JSduino.V();var A = JSduino.A();");
             linesSplit.push(code);
             linesSplit.push("})()");
             
-            //param_func_loop = new Function("(function(){var V = JSduino.V();var A = JSduino.A();" + linesSplit.join("\n") + "})()");
-            //param_func_loop = new Function("(function(){var V = JSduino.V();var A = JSduino.A();" + escodegen.generate(ast) + "})()");
             return ( linesSplit.join("\n") );
         }
         
-        /** Trata optimizandolo el código pasado (suprimir comentarios), e incluye nuevos ámbitos, variables y funciones de conveniencia. 
-          * También se utiliza para embeber en el código unas funciones de ralentización. */
+        /** It tries to optimize the past code (suppress comments), and includes new scopes, variables and convenience functions.
+          * It is also used to embed some slowdown functions in the code. */
         Code.parseAndClean = function _parseAndClean(code, ralentizar){
             var ast = null;
-            //ANALIZA Y DEPURA EL CÓDIGO CON ACORN Y ESCODEGEN, CON WALK LO MODIFICAMOS
+            //PARSE AND DEBUG THE CODE WITH ACORN AND ESCODEGEN, WITH WALK WE MODIFY IT
             if(acorn){
-                //PARSEAMOS, LIMPIAMOS Y OPTIMIZAMOS
+                //WE PARSE, CLEAN AND OPTIMIZE
                 var acornOptions = {
                     sourceType: "script" //"module"
                 }
                 ast = acorn.parse(code, acornOptions);
                 if(ralentizar && acorn.walk){
-                    //INCLUYE UNA FUNCIÓN RALENTIZADORA
+                    //INCLUDES A SLOWING-DOWN FUNCTION
                     ast = Code.ralentizar(ast, false);
                 }
                 if(escodegen){
@@ -1711,13 +1637,13 @@ var JSduino = (function (_JSduino_){
             
             return code;
         }
-        /** Retorna un AST (árbol de síntaxis abstracta) (o string) embebiéndole en el código unas funciones de ralentización. */
+        /** Returns an AST (abstract syntax tree) (or string) embedding in the code some slowing functions. */
         Code.ralentizar = function _ralentizar(codeOrAst, lineByLine){
             var acornOptions = {
                 sourceType: "script" //"module"
             }
             if(lineByLine){
-                //CASO_1:: INCLUYENDOLA MANUALMENTE LÍNEA A LÍNEA. (fallaría en algunos casos, por ejemplo en estamentos 'switch', en cadenas de múltiples líneas, ...)
+                //CASO_1:: MANUALLY INCLUDING LINE-BY-LINE. (it would fail in some cases, for example in 'switch' estates, in chains of multiple lines, ...)
                 var linesSplit = codeOrAst.split("\n");
                 for(var i=0; i<linesSplit.length; i++){
                     if(i%2 > 0){linesSplit.splice(i, 0, "(function(){var rest = (new Date()).getTime();while(rest > ((new Date()).getTime() - 10)){}})();");}
@@ -1726,11 +1652,11 @@ var JSduino = (function (_JSduino_){
                 //console.log(linesSplit);
                 return linesSplit.join("\n");
             }else{
-                //CASO_2: Mediante Walk. Más seguro y elegante
+                //CASO_2: Through Walk. More secure and elegant
                 var ralen = acorn.parse("(function(){var rest = (new Date()).getTime();while(rest > ((new Date()).getTime() - 10)){}})()", acornOptions);
                 ralen = ralen.body[0];
                 //console.log(ralen);
-                //LO MODIFICAMOS PARA INSERTAR DENTRO DE CADA ESTAMENTO DE BLOQUE LA FUNCIÓN DE RETARDO
+                //WE MODIFY IT TO INSERT WITHIN EACH BLOCK STATUS THE DELAY FUNCTION
                 acorn.walk.simple(codeOrAst, {
                       BlockStatement: function b(node){
                           //console.log(node.body);
@@ -1750,10 +1676,10 @@ var JSduino = (function (_JSduino_){
     //END MODULE CLASS: JSduino.Code
     
     //BEGIN MODULE: JSduino.ino
-    /* Sub-Namespace 'ino' dentro del namespace 'JSduino'.
-     * Define y emula las funciones de Arduino.
-     * El código externo a ejecutar debe introducirse a través del método 'setup()' y 'loop()'
-     * como en Arduino. */
+    /** Sub-Namespace 'ino' into 'JSduino' namespace.
+     * Define and emulate the functions of Arduino.
+     * The external code to must be introduced through the method 'setup()' and 'loop()'
+     * as in Arduino. */
     _JSduino_.ino = (function (){
         //CONSTANTES DE TIEMPO PARA LOS TIMERs
         //var _TICKS_INTERVAL = 1000, _TICKS_INIT = 100, _TICKS_CLEAR = 100;
