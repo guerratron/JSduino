@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta language="es-ES" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+        <title>JSduino v1.0.0 - Arduino Simulator in JS</title>
+        <script type="text/javascript" src="../API/js/JSduino.js"></script>
+                
+        <script type="text/javascript">
+            var uls=/*ACTUATORS OBJECT*/
+{"INPUT":{"id":"buttonsInput","caption":"ENTRADAS:","className":"actuators input","list":[{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"13","txt":"AC_DC","value":0,"className":"actuator"},{"type":"switcher","mode":"INPUT","family":"DIGITAL","id":"12","txt":"AutMan","value":1,"className":"actuator"},{"type":"buttonNO","mode":"INPUT","family":"DIGITAL","id":"11","txt":"B_PARO","value":0,"className":"actuator"},{"type":"buttonNO","mode":"INPUT","family":"DIGITAL","id":"10","txt":"B_MARCHA","value":0,"className":"actuator"},{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"9","txt":"WARNING","value":0.3,"className":"actuator"},{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"8","txt":"HIDRO","value":1,"className":"actuator"},{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"7","txt":"GON","value":0,"className":"actuator"}]},"OUTPUT":{"id":"buttonsOutput","caption":"SALIDAS:","className":"switches output","list":[{"type":"ledOrange","mode":"OUTPUT","family":"DIGITAL","id":"6","txt":"G_START","value":1,"className":"actuator"},{"type":"ledRed","mode":"OUTPUT","family":"DIGITAL","id":"5","txt":"G_STOP","value":0,"className":"actuator"},{"type":"ledGreen","mode":"OUTPUT","family":"DIGITAL","id":"4","txt":"B_START","value":0,"className":"actuator"},{"type":"ledRed","mode":"OUTPUT","family":"DIGITAL","id":"3","txt":"B_STOP","value":1,"className":"actuator"},{"type":"ledOrange","mode":"OUTPUT","family":"DIGITAL","id":"2","txt":"B_WARNING","value":1,"className":"actuator"}]}};
+        </script>
+    </head>
+    <body>
+        <!-- BEGIN: JSduino STRUCTURE -->
+        <div id="containerSVG">
+        </div>
+        <!-- END: JSduino STRUCTURE -->
+        <script>
+            "use strict";
+            //CAN BE USED ON ANY SCRIPT LABEL AT THE END OF THE BODY ALWAYS THE HTML CONTAINER IS ALREADY DEFINED.
+            // INTERNALLY ALREADY PROVIDED WITH THE WAITING METHOD 'DOMContentLoaded'
+            JSduino.init(document.getElementById("containerSVG")/*, {width: 555/2, height:432/2, viewBox: {x:0, y:0, w:212, h:162}}, uls*/);
+            //THE ENTIRE CODE TO BE EXECUTED BY JSduino IS BETTER TO EMBRACE IT INSIDE METHOD 'toDo' WHOSE ADMITTED 
+            //PARAMETERS ARE THE FUNCTION TO BE EXECUTED, OPTIONAL PARAMETERS TO BE PASSED TO THIS FUNCTION, AND OPTIONALLY THE TIME 
+            //IN MILLISEGUNDS TO WAIT. BY DEFAULT WAIT 100 msg.
+            /* JSduino.toDo(
+                function(){
+                    //var paper = jsvg;
+                   //REDIMENSIONAMOS EL OBJETO RAPHAEL:
+                   //paper.setSize("555", "432"); //raphael
+                   //paper.setViewBox(0, 0, 212, 162, true);//raphael
+                   var V = JSduino.V(); //Almacena todas las variables de usuario
+                    var A = JSduino.A(); //Contiene los métodos Arduino
+                    JSduino.preSetup(function(){
+                        A.toConsole("init preSetup...");
+                        V.msg = "::mensage a transmitir::";
+                        V.digOutCinco = 5;
+                        V.digInSeis = 6;
+                        V.analogIn3 = "A3";
+                        A.toConsole("end preSetup... to setup...");
+                    });
+                    JSduino.setup(function(){
+                        var vs = Object.keys(V);
+                        A.toConsole("init setup... " + vs.length + " variables definidas: {" + vs + "}");
+                        JSduino.ui.containers.Messages.innerHTML += "Hello World;\t";
+                        A.Serial.begin(2200);
+                        A.Serial.println("imprimiendo a consola desde Serial.println");
+                        A.pinMode(V.digOutCinco, "OUTPUT");
+                        A.pinMode(V.digInSeis, "INPUT");
+                        A.pinMode(V.analogIn3, "INPUT");
+                        A.toConsole("end setup... to loop...");
+                    });
+                    JSduino.loop(function(){
+                        //A.toConsole("init loop...");
+                        JSduino.ui.containers.Messages.innerHTML += "Hello World;\t";
+                        //A.delay(4000);
+                        //A.digitalWrite(V.digOutCinco, "HIGH");
+                        //A.digitalWrite(V.digInSeis, "LOW");
+                        //A.digitalWrite(V.analogIn3, "HIGH");//no permite la escritura porque es modo "INPUT" y porque no es familia "DIGITAL"
+                        //A.analogWrite(V.analogIn3, "HIGH"); //no lo permite porque es de modo INPUT
+                        //console.log(A.digitalRead(V.digOutCinco));
+                        //console.log("index:: analogRead(digOutCinco) :: " + A.analogRead(V.digOutCinco)); //SI lo permite porque el pin 5 también es PWM
+                        //console.log("index:: analogWrite(digOutCinco, 1) :: " + A.analogWrite(V.digOutCinco, 0.4)); //SI lo permite porque el pin 5 también es PWM
+                        //console.log(":: AnalogRead :: " + A.analogRead(V.analogIn3));
+                        //A.toConsole("end loop...");
+                    });
+                }, null, 200
+            );*/
+        </script>
+    </body>
+</html>
