@@ -1,75 +1,288 @@
-<!DOCTYPE HTML>
-<html lang="es">
-    <head>
-        <meta charset="utf-8" />
-        <meta language="es-ES" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" href="favicon.ico" type="image/x-icon"/>
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
-        <title>JSduino v1.0.0 - Arduino Simulator in JS</title>
-        <script type="text/javascript" src="API/js/JSduino.js"></script>
-                
-        <script type="text/javascript">
-            var uls=/*ACTUATORS OBJECT*/
-{"INPUT":{"id":"buttonsInput","caption":"ENTRADAS:","className":"actuators input","list":[{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"13","txt":"AC_DC","value":0,"className":"actuator"},{"type":"switcher","mode":"INPUT","family":"DIGITAL","id":"12","txt":"AutMan","value":1,"className":"actuator"},{"type":"buttonNO","mode":"INPUT","family":"DIGITAL","id":"11","txt":"B_PARO","value":0,"className":"actuator"},{"type":"buttonNO","mode":"INPUT","family":"DIGITAL","id":"10","txt":"B_MARCHA","value":0,"className":"actuator"},{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"9","txt":"WARNING","value":0.3,"className":"actuator"},{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"8","txt":"HIDRO","value":1,"className":"actuator"},{"type":"sensor","mode":"INPUT","family":"DIGITAL","id":"7","txt":"GON","value":0,"className":"actuator"}]},"OUTPUT":{"id":"buttonsOutput","caption":"SALIDAS:","className":"switches output","list":[{"type":"ledOrange","mode":"OUTPUT","family":"DIGITAL","id":"6","txt":"G_START","value":1,"className":"actuator"},{"type":"ledRed","mode":"OUTPUT","family":"DIGITAL","id":"5","txt":"G_STOP","value":0,"className":"actuator"},{"type":"ledGreen","mode":"OUTPUT","family":"DIGITAL","id":"4","txt":"B_START","value":0,"className":"actuator"},{"type":"ledRed","mode":"OUTPUT","family":"DIGITAL","id":"3","txt":"B_STOP","value":1,"className":"actuator"},{"type":"ledOrange","mode":"OUTPUT","family":"DIGITAL","id":"2","txt":"B_WARNING","value":1,"className":"actuator"}]}};
-        </script>
-    </head>
-    <body>
-        <!-- BEGIN: JSduino STRUCTURE -->
-        <div id="containerSVG">
-        </div>
-        <!-- END: JSduino STRUCTURE -->
-        <script>
-            "use strict";
-            //CAN BE USED ON ANY SCRIPT LABEL AT THE END OF THE BODY ALWAYS THE HTML CONTAINER IS ALREADY DEFINED.
-            // INTERNALLY ALREADY PROVIDED WITH THE WAITING METHOD 'DOMContentLoaded'
-            JSduino.init(document.getElementById("containerSVG")/*, {width: 555/2, height:432/2, viewBox: {x:0, y:0, w:212, h:162}}, uls*/);
-            //THE ENTIRE CODE TO BE EXECUTED BY JSduino IS BETTER TO EMBRACE IT INSIDE METHOD 'toDo' WHOSE ADMITTED 
-            //PARAMETERS ARE THE FUNCTION TO BE EXECUTED, OPTIONAL PARAMETERS TO BE PASSED TO THIS FUNCTION, AND OPTIONALLY THE TIME 
-            //IN MILLISEGUNDS TO WAIT. BY DEFAULT WAIT 100 msg.
-            /* JSduino.toDo(
-                function(){
-                    //var paper = jsvg;
-                   //REDIMENSIONAMOS EL OBJETO RAPHAEL:
-                   //paper.setSize("555", "432"); //raphael
-                   //paper.setViewBox(0, 0, 212, 162, true);//raphael
-                   var V = JSduino.V(); //Almacena todas las variables de usuario
-                    var A = JSduino.A(); //Contiene los métodos Arduino
-                    JSduino.preSetup(function(){
-                        A.toConsole("init preSetup...");
-                        V.msg = "::mensage a transmitir::";
-                        V.digOutCinco = 5;
-                        V.digInSeis = 6;
-                        V.analogIn3 = "A3";
-                        A.toConsole("end preSetup... to setup...");
-                    });
-                    JSduino.setup(function(){
-                        var vs = Object.keys(V);
-                        A.toConsole("init setup... " + vs.length + " variables definidas: {" + vs + "}");
-                        JSduino.ui.containers.Messages.innerHTML += "Hello World;\t";
-                        A.Serial.begin(2200);
-                        A.Serial.println("imprimiendo a consola desde Serial.println");
-                        A.pinMode(V.digOutCinco, "OUTPUT");
-                        A.pinMode(V.digInSeis, "INPUT");
-                        A.pinMode(V.analogIn3, "INPUT");
-                        A.toConsole("end setup... to loop...");
-                    });
-                    JSduino.loop(function(){
-                        //A.toConsole("init loop...");
-                        JSduino.ui.containers.Messages.innerHTML += "Hello World;\t";
-                        //A.delay(4000);
-                        //A.digitalWrite(V.digOutCinco, "HIGH");
-                        //A.digitalWrite(V.digInSeis, "LOW");
-                        //A.digitalWrite(V.analogIn3, "HIGH");//no permite la escritura porque es modo "INPUT" y porque no es familia "DIGITAL"
-                        //A.analogWrite(V.analogIn3, "HIGH"); //no lo permite porque es de modo INPUT
-                        //console.log(A.digitalRead(V.digOutCinco));
-                        //console.log("index:: analogRead(digOutCinco) :: " + A.analogRead(V.digOutCinco)); //SI lo permite porque el pin 5 también es PWM
-                        //console.log("index:: analogWrite(digOutCinco, 1) :: " + A.analogWrite(V.digOutCinco, 0.4)); //SI lo permite porque el pin 5 también es PWM
-                        //console.log(":: AnalogRead :: " + A.analogRead(V.analogIn3));
-                        //A.toConsole("end loop...");
-                    });
-                }, null, 200
-            );*/
-        </script>
-    </body>
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>JSduino by guerratron</title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/styles.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="stylesheets/template.css" media="screen">
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<!-- <script type="text/javascript" src="javascript/main.js"></script> -->
+		<!-- SLICK SLIDE
+		<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.css"/>
+		<link rel="stylesheet" type="text/css" href="javascripts/slick/slick-min.css"/> -->
+  </head>
+  <body>
+    <section class="page-header">
+			<img src="img/sello_js.png" alt="js_ico" title="Javascript language" style="position:absolute; left:2%;" />
+      <h1 class="project-name">JSduino</h1>
+      <img src="img/JSduino_logo.png" alt="JSduino logo" title="JSduino GitHub page" />
+      <h2 class="project-tagline">JSduino - ARDUINO SIMULATOR in JS.</h2>
+	  <a href="http://guerratron.github.io/" class="btn" style=""><img src="img/home.png" alt="home_icon" title="Guerratron GitHub home page" /></a>
+      <a href="https://github.com/guerratron/JSduino" class="btn">View on GitHub</a>
+      <a href="https://github.com/guerratron/JSduino/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/guerratron/JSduino/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+		
+      <blockquote>
+<hr />
+
+        <nav>
+					<span class="caption">INDEX:</span>
+					<ul id="TOC">
+						<li><a data-scroll href="#JSduino" title="introduction">Introduction</a></li>
+						<li><a data-scroll href="#usage" title="how it use">Usage</a></li>
+						<li><a data-scroll href="#target" title="game objective">Objective</a></li>
+						<li><a data-scroll href="#interface" title="the User Interface">Interface</a></li>
+						<li><a data-scroll href="#to_consider" title="to have in mind">To Consider</a></li>
+                        <li><a data-scroll href="#acknowledgment" title="Acknowledgment and Gratefulness">Acknowledgment</a></li>
+						<!-- <li><a href="#requirements" title="script requirements">Requirements</a></li>
+						<li><a href="#instalation" title="script install">Instalation</a></li>
+						<li><a href="#usage" title="the script usage">Usage</a></li>
+						<li><a href="#web-flow-creation" title="the script web-flow-creation">Web flow creation</a></li>
+						<li><a href="#developing" title="develop by">Developing</a></li>
+						<li><a href="#tools" title="tools for write code">Tools</a></li>
+						<li><a href="#author" title="script author">Author</a></li> -->
+					</ul>
+					<br class="clearfix" />
+				</nav>
+		<!-- SLICK SLIDE
+		<section class="carousel" style="text-align: center;">
+			
+				<div class="slick-slide-target1">
+					<div>
+						<a href="img/zonesGUI.png"> <img src="img/zonesGUI.png" alt="GUI areas" title="GUI areas" /> </a>
+						<span style="font-size:smaller;">buttons, canvas, options, footer, ...</span>
+					</div>
+					<div>	<a href="img/zoneOptions2.png"> <img src="img/zoneOptions2.png" alt="GUI options area" title="options area" /> </a> </div>
+					<div>
+						<a href="img/zoneCoordinates.png"> <img src="img/zoneCoordinates.png" alt="GUI coordinates area" title="coordinates area" /> </a>
+						<span style="font-size:smaller;">Coordinates area</span>
+					</div>
+					<div>	<a href="img/ex1.jpg"> <img src="img/ex1.jpg" alt="example-1" title="bexample 1" /> </a> </div>
+					<div>	<a href="img/ex2.png"> <img src="img/ex2.png" alt="example-2" title="example 2" /> </a> </div>
+					<div>	<a href="img/ex3.png"> <img src="img/ex3.png" alt="example-3" title="example 3" /> </a> </div>
+					<div>	<a href="img/ex4.png"> <img src="img/ex4.png" alt="example-4" title="example 4" /> </a> </div>
+					<div>	<a href="img/ex5.png"> <img src="img/ex5.png" alt="example-5" title="example 5" /> </a> </div>
+					<div>	<a href="img/canvasShapesButtons.png"> <img src="img/canvasShapesButtons.png" alt="GUI buttons area" title="buttons area" /> </a> </div>
+				</div>
+		</section> -->
+
+<header>'JSduino' (Windows executable) - Pseudo-Pacman 3D game, levels from text file (ASCII).<br>
+  From: 'Unity3D'.<br>
+  Author: Juan José Guerra Haba - <a href="&#x6d;&#97;&#105;&#108;&#116;&#x6f;&#x3a;&#100;&#105;&#110;&#x65;&#x72;&#x74;&#114;&#x6f;&#110;&#64;&#x67;&#109;&#x61;&#x69;&#x6c;&#46;&#99;&#x6f;&#x6d;">&#100;&#105;&#110;&#x65;&#x72;&#x74;&#114;&#x6f;&#110;&#64;&#x67;&#109;&#x61;&#x69;&#x6c;&#46;&#99;&#x6f;&#x6d;</a> - 2018 June<br />
+  License: Free BSD. &amp; Open GPL v.3. Keep credit, please.<br>
+  Versión: 0.1.0<br />
+  Main File: JSduino.js [classname: JSduino] 
+</header>
+<!-- <p><a href="https://sourceforge.net/p/rslib-js/"><img src="https://sourceforge.net/sflogo.php?type=8&amp;group_id=2629568" alt="Download rsLIB"></a>  </p> -->
+
+<hr />
+
+<h1>
+<a id="JSduino" name="JSduino" class="anchor" href="#JSduino" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JSduino <sub style="font-size:smaller;">a great Arduino simulator in JS</sub></h1>
+
+<p><em>emulates an arduino board (<i>UNO R3</i>)</em></p>
+</blockquote>
+		
+
+<p>JSduino is a web-app written in '<i>JavaScript</i>' that emulates an arduino board (<i>UNO R3</i>) with the representation of its input and output pins, and the possibility of inserting buttons that act on those pins. These buttons are actuators that can behave like Switches, NO pushbuttons, NC pushbuttons, push-switches, ... or also receivers such as LEDs and sensors.</p>
+
+<p>In the app you can select devices that act on the different pins of the board to see in real time the different states of the pins depending on the code entered and the actions on those actuators.</p>
+
+<p>The <em>UNO</em> board shown is <b>interactive</b>, it seems real, allowing to act on each pin individually, see its status, the internal LEDs and even the <i>reset</i> button reacts to user events.</p>
+
+<blockquote>
+    <p>This web application allows you to try virtually Arduino projects saving the assembly and the benefits of immediacy that allows us to 'javascript'. In a matter of minutes we can visualize how our real prototype would behave before starting the assembly, offering us an idea of how to undertake it in the best way and what functions we would need to implement.</p>
+
+    <p>This application is aimed at developers who are more comfortable (<i>like myself</i>) implementing javascript solutions. JS is much more flexible and easy to use than 'C' (<i>my opinion</i>) and, although it is not the same, similar results can be expected in the face of development challenges.</p>
+
+    <p>The drawback is that Arduino is programmed in 'C', and for a 'javascript programmer' it can cost a lot to find a direct solution in this language. That is where it can be advantageous (<i>for me it has been</i>) to use a <b>tests intermediary</b>. Once we find the behavior sought through 'javascript' it is not that difficult <i>'transpilation'</i> to 'C' as it would have been coding it directly in this language.</p>
+</blockquote>
+
+<h2><a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>In addition to loading the <b>JSduino API</b> using its corresponding label in the 'head' of the page: <br />
+<code>&lt;script type="text/javascript" src="API/JSduino.js"&gt;&lt;/script&gt;</code></p>
+
+<p>This script is self-sufficient and will be responsible for building the entire interface and loading the necessary external scripts such as: the <i>'Raphael-JS' library</i>, <i>acorn.js</i>, <i>escodegen.js</i> and <i>edit_area.js</i> among others. It will also load the styles, and will establish effects and events on the board and action buttons.</p>
+
+<p>It can then be initialized using a 'script' tag (obviously the container must be defined):<br />
+    <pre>
+    &lt;script type="text/javascript"&gt;
+        //JSduino INITIALIZATION:
+        JSduino.init(document.getElementById("containerSVG"));
+    &lt;/script&gt;
+    </pre>
+</p>
+
+<p>The initialization '<b>init (..)</b>' method supports up to three parameters: the container element, an object with the board size options and an object of devices to use. An example of these parameters could be:</p>
+
+<ul>
+   <li>Container: [DOMElement]<br />
+        document.getElementById("containerSVG")</li>
+   <li>Size: [Object JS]<br />
+        {width: 555/2, height:432/2, viewBox: {x:0, y:0, w:212, h:162}}</li>
+   <li>objActuators: [Object json] Represents a devices state with which to start working, eg.:</li>
+</ul>
+
+<pre>
+{
+    "INPUT":{
+        "id":"buttonsInput", 
+        "caption":"INPUTS:", 
+        "className":"actuators input", 
+        "list":[
+            {"type":"switcher","mode":"INPUT","family":"ANALOG","id":"A0","value":1,"className":"actuator"}, 
+            {"type":"switcher","mode":"INPUT","family":"DIGITAL","id":"6","value":0,"className":"actuator"}, 
+            {"type":"switcher","mode":"INPUT","family":"ANALOG","id":"A3","value":0,"className":"actuator"}
+        ]
+    }, 
+    "OUTPUT":{
+        "id":"buttonsOutput",
+        "caption":"OUTPUTS:", 
+        "className":"switches output", 
+        "list":[
+            {"type":"ledBlue","mode":"OUTPUT","family":"DIGITAL","id":"8","value":1,"className":"actuator"}, 
+            {"type":"switcher","mode":"OUTPUT","family":"DIGITAL","id":"5","value":0,"className":"actuator"}
+        ]
+    }
+}
+</pre>
+
+<p>The <b>JSduino API</b> is responsible for generating the entire HTML structure and loading the styles, as well as assigning the js behavior for the entire interface.
+It is interesting to note that the plate is represented with an <i>SVG</i> image generated <i>'on the fly'</i> by means of the <b>Raphael-JS script</b> , which gives it the necessary dynamism and interactivity.</p>
+
+<blockquote>To see the HTML structure generated by this application you can see the file '<b>struct.html</b>'</blockquote>
+
+<h2><a id="target" class="anchor" href="#target" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Objective:</h2>
+
+<p>The objective of this application is a previous step to the construction of a real prototype with arduino, working in a <i>virtual</i> way, saving assembly time on the board.  
+This project does not implement all the Arduino functions in full, nor does it support add-ons. This application became a quick evaluation and behaved like the <i>UNO R3</i> board in front of simple programming challenges.</p>
+
+<p>It is not intended for productive products, rather as a testing tool to help in the first steps of the development of a project <i>real Arduino</i>; before implementing it physically on a board, can help us to debug the algorithm to be used, visualizing the responses of this through the inputs and outputs in virtual devices (buttons, push buttons, LEDs, etc.), without having to wire anything .</p>
+
+<h2><a id="interface" class="anchor" href="#interface" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Interface:</h2>
+
+<p>The <i>UI</i> represents a board '<b>Arduino UNO R3</b>' interactive, and around it a series of zones:</p>
+
+<ul>
+    <li>Devices Area: Represents the devices available for use, each of them has different characteristics can be input or output, and admitting analog or digital values: <i>Switch, NO pushbutton, NC pushbutton, Sensor, LEDs, Display</i>. One of them must be selected before clicking on the desired pin.</li>
+    <li>Actuators Area: Both actuators and receivers, represents the devices attacking pins that will be used in our circuit. They are interactive and allow their manipulation both with user actions and programmatically through the code.</li>
+    <li>Buttons Area: It houses the different actions allowed on the board. From the execution of the code to the saving of the current states and objects in the session. <i>Run / Pause, ReLoad State, Save, Delete, View State, and the code buttons</i>.</li>
+    <li>Console Area: Represents a simulation of what the <b>Monitor</b> would be in <i>Arduino</i>. It is handled through messages sent from the code itself through the object <i>'Serial'</i>.</li>
+    <li>Messages Area: This zone has been implemented for possible extensions, at the moment it is not used.</li>
+</ul>
+
+<p>The code buttons allow access to the three separate areas: <i>Global, Setup and Loop</i>. We are talking about code, OF COURSE, written in the '<b>javascript</b>' valid language.  
+In the Global area, the code would be introduced outside the <i>setup() and loop()</i> functions of the <b>Arduino IDE</b>, both variable definition and user functions.</p>
+
+<p>Due to the nature <b>JS</b>, there are sensible modifications with respect to the code that we would write in language <b>C</b>. All global variables to be defined must be treated as properties of a global object called <b>'V'</b>, so that to define a variable as <i>'var pin02 = 2;'</i> must be implemented as <i>'V.pin02 = 2;'</i>, but it will be treated as local.</p>
+
+<p>Custom or user functions will be immediately available in any code area (<i>Global, Setup or Loop</i>) without relying on the global object <b>'V'</b>, although they could also be defined as methods of this object.</p>
+
+<p>The main functions of the <i>IDE Arduino</i> have been implemented: <i>pinMode, digitalRead, digitalWrite, analogRead</i>, ... and even the part of the object <i>'Serial'</i> that communicates with the console monitor.</p>
+
+<h2><a id="to_consider" class="anchor" href="#to_consider" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>To Consider:</h2>
+
+<p>This is an approximation to the behavior of the code on an <i>Arduino</i> real board, it does not mean that it is exactly the same, but it can offer us a very approximate idea.</p>
+
+<p><b>ATTENTION</b>: The <i>'delay (..)'</i> function is advised <b>not to use</b> as much as possible, since what it does is <i>'freeze the execution of the JS engine'</i>. This is due to the nature of Javascript itself as a language that is not <i>multi-threaded</i>, where it does not make sense to stop the engine since it can cause the whole <i>UI</i> to stop during a time-lapse, preventing the system response in User actions such as pressing a button.  <br />
+You have to look for alternatives to pause the code, in such a way that a BLINK example commonly written as:</p>
+
+<pre>
+    //TRADITIONAL BLINK:  
+    digitalWrite(5, "LOW");  
+    delay(2000);  
+    digitalWrite(5, "HIGH");  
+    delay(2000);
+</pre>
+
+<p>could be implemented as:</p>
+
+<pre>
+    //ALTERNATIVE BLINK:  
+    V.on = !V.on;  
+    digitalWrite(5, V.on ? HIGH : LOW);  
+    delay(2000);
+</pre>
+
+<h3><a id="acknowledgment" class="anchor" href="#acknowledgment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ACKNOWLEDGMENT AND GRATEFULNESS:</h3>
+
+<p>Thanks to the author of the <i>'Raphael-JS'</i> library, a great library for handling and effects in <i>SVG</i> images.
+Internally contains other dependencies for the parsing and highlighting of the code such as: <i>'acorn, escodegen and edit-area'</i>, many thanks to the authors of these great libraries.</p>
+
+<hr />
+
+<h3><a id="tools" class="anchor" href="#tools" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tools</h3>
+
+<p>Programmed with <a href="https://notepad-plus-plus.org/">Notepad ++</a>. Entirely with JS code (Unity)</p>
+
+<p><a href="https://www.eclipse.org/">Eclipse</a>: The essential tools for any developer, including JavaScript, PHP, Java, ... language support, Git client, Mylyn and editors for JavaScript, HTML, CSS and XML. </p>
+
+<h3><a id="developing" class="anchor" href="#developing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Developing</h3>
+
+<p>Developed by <a href="mailto://dinertron@gmail.com" title="author">GuerraTron</a> <a href="https://github.com/2018" class="user-mention">@2018</a></p>
+
+<hr>
+
+<p><strong>AUTHOR</strong>: <code>I hope I can be of use to someone as it has been for me. In this case it would be appreciated comment use in email or suggestions for future improvements.</code>
+PLEASE, KEEP CREDITS AND LINKS. THANKS !</p>
+
+<blockquote>
+    <code>... And as he said 'George Lucas': that the force be with you. !!</code>
+</blockquote>
+
+    </section>
+
+		  <footer class="site-footer">
+        <span class="site-footer-owner"><img src="img/JSduino_logo_mini.png" alt="JSduino_logo" title="JSduino logo" />&emsp; <a href="https://github.com/guerratron/JSduino">JSduino</a> is maintained by <a href="https://github.com/guerratron">guerratron</a>. <img src="img/torotron_logo.png" alt="guerratron logo" title="author" /></span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> &mdash; modified by <a href="https://github.com/guerratron">guerratron</a>. <img src="img/torotron_logo.png" alt="guerratron logo" title="guerratron logo" />.</span>
+      </footer>
+			
+      <!-- TO-TOP BUTTON -->
+    <a data-scroll data-options='{ "easing": "easeOutQuad" }' class="totop" href="#"><span style="font-size: x-large">&Delta;</span></a>
+    
+			<!-- SLICK SLIDE
+			<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.min.js"></script>
+			<script type="text/javascript" src="javascripts/slick/slick.min.js"></script> -->
+			<!-- SMOOTH-SCROLL -->
+      <script type="text/javascript" src="javascripts/smooth-scroll/smooth-scroll.min.js"></script>
+    
+			<script>
+				// Can also be used with $(window).load(function() {
+				$(document).ready(function() {
+          //SLICK SLIDE from: http://kenwheeler.github.io/slick/
+					/*$('.slick-slide-target1').slick({
+						dots: true,
+						infinite: true,
+						speed: 600,
+						slidesToShow: 2,
+						centerMode: true,
+						variableWidth: false,
+						useCSS: true,
+						swipeToSlide: true,
+						respondTo: "min",
+						pauseOnDotsHover: true,
+						autoplay: true,
+						mobileFirst: true,
+						infinite: false,
+						focusOnSelect: true,
+						centerMode: true,
+						adaptiveHeight: false,
+					});*/
+          
+          //SMOOTH-SCROLL by https://github.com/cferdinandi THANKS!
+          smoothScroll.init();
+				});
+		</script>
+  
+  </body>
 </html>

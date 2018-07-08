@@ -1,0 +1,176 @@
+body{text-align:justify; /*font-family:calibri,"courier","serif"; font-size:120%;*/}
+/*TOTAL DIV* /
+#divTotal{width:100%; margin:0; padding: 4px; background:url("../img/fondo_inv.png"); text-align: justify;}
+/*CONTAINER* /
+#container{max-width:70%; margin:auto; background:white; padding: 5%;}
+#container h1{max-width:40%; margin:auto; color:navy; text-shadow:1px 1px 2px slateBlue;}
+/*HEADER*/
+header{max-width:85%; margin:auto; background:navajoWhite; color:#333333; border-radius:8px; box-shadow:2px 2px 4px darkGray; padding:15px; margin-top:40px;
+    font-family: sans-serif;
+    text-shadow: 0 1px 0 #fff;
+		text-align: left;
+}
+header span{float:left; font-size:xx-large; font-weight:bolder; color:blue;}
+header sub{float:left; color:maroon; margin:6px;}
+header img{float:right; max-width:25%;}
+header blockquote{max-width:70%;}
+header blockquote>blockquote{background:LemonChiffon; padding:14px; border-radius:10px; max-width:70%;}
+header #torotron{float:none; max-height:1em;}
+/*CODE* /
+code{display:block; background:whiteSmoke; padding:10px; border:2px ridge gray; border-radius:8px; box-shadow:2px 2px 4px darkGray; font-family:"calibri","Arial","courier","monospace"; font-size:100%; line-height: 120%; text-align:left;}
+code>span{display:block; background:none; margin:1px 6px; font-size:90%; line-height: 120%; }
+code>span:hover{background:lightYellow;}
+code i:hover{background:Yellow;}
+/*CLASS-CODE*/
+.var{color:darkGreen; font-weight:bolder}
+.ns{color: indigo; font-weight:bolder;} /*namespace*/
+.prop{color:blue;}
+.param{color:indigo;}
+.func{color:red;}
+.obj{color:maroon; font-weight:bolder;}
+.meth{color:navy;}
+.nfunc{color:black;}
+.txt{color:gray;}
+.comment{color:green; font-size:medium;}
+.bool{color:Purple; font-weight:bolder;}
+
+.mini_obj{color:chocolate; font-weight:bolder;}
+.mini_meth{color:steelBlue;}
+.mini_nfunc{color:black;}
+/*OTHERS*/
+.clearfix{clear:both;}
+.PD{background:LemonChiffon; padding:2px 4px; border-radius:6px; font-size:smaller; font-style:italic;}
+.alert{background:LightSalmon; color: maroon; padding:12px; margin: 1px; border-radius:6px; font-size:smaller; font-style:italic;}
+.resaltar{background: yellow; color:darkGreen; cursor: pointer; padding: 0 2px;}
+
+
+	abbr{
+		font-style: italic;
+		cursor: pointer;
+		border-bottom: 1px dotted;
+	}
+	nav{
+		/*clear:both;*/
+		background: whiteSmoke;
+		padding: 1px;
+	}
+	nav .caption {
+		float:left;
+		color: darkGray;
+		margin: 15px 2px;
+    vertical-align: middle;
+	}
+	nav ul{
+		list-style: none;
+		float:left;
+	}
+	nav ul li{
+		float:left;
+		margin: 2px;
+		padding:1px 4px;
+		background: lightBlue;
+		border-radius: 6px;
+		box-shadow: 1px 2px 4px;
+		text-decoration: none;
+	}
+	nav ul li:hover{
+		background: lightBlue;
+		box-shadow: none;
+	}
+	nav ul li a{
+		text-decoration: none;
+	}
+	table, th, td {
+    border: 1px solid black;
+		margin:auto;
+	}
+	table th, table td {
+		text-align: center;
+		font-size: smaller;
+		padding: 2px;
+	}
+	table td.title{
+		font-size: x-small;
+		font-weight: bolder;
+		background: gray;
+	}
+	table thead tr{
+		background: lightGray;
+	}
+	table tbody tr:nth-of-type(odd){
+		background: #EEEEEE;
+	}
+	table tbody tr:hover{
+		background: lightYellow;
+	}
+	
+	.intro{
+		color: #333333;
+		background: #EDEDED;
+		padding: 10px;
+	}
+
+	/*BUTTONS*/
+	.button26{
+		width:26px;
+		height: 26px;
+		display: inline-block;
+	}
+	/*.btnLanguage{ background: url(../img/canvasShapesButtons.png) 0 0; }
+	REVERSE: */
+	.btnSelected{ background: url(../img/canvasShapesButtons.png) 0 25px; }
+	.btnGrouped{ background: url(../img/canvasShapesButtons.png) 0 51px; }
+	.btnCoordinates{ background: url(../img/canvasShapesButtons.png) 0 77px; }
+	.btnTrash{ background: url(../img/canvasShapesButtons.png) 0 103px; }
+	.btnClean{ background: url(../img/canvasShapesButtons.png) 0 129px; }
+	.btnDownload{ background: url(../img/canvasShapesButtons.png) 0 155px; }
+	.btnOptions{ background: url(../img/canvasShapesButtons.png) 0 181px; }
+	.btnZoomOut{ background: url(../img/canvasShapesButtons.png) 0 207px; }
+	.btnZoomIn{ background: url(../img/canvasShapesButtons.png) 0 233px; }
+	.btnZoomRestore{ background: url(../img/canvasShapesButtons.png) 0 259px; }
+	.btnRefresh{ background: url(../img/canvasShapesButtons.png) 0 285px; }
+	.btnLanguage{ background: url(../img/canvasShapesButtons.png) 0 311px; }
+	/*PARAMS*/
+	.param16{
+		width:16px;
+		height: 16px;
+		margin-top: 4px;
+		display: inline-block;
+		float:left; 
+	}
+	/*.parGrid{ background: url(../img/canvasShapesInputs.png) 0 0; }
+	REVERSE: */
+	.parFreeDrawColor{ background: url(../img/canvasShapesInputs.png) 0 16px; }
+	.parFreeDrawSize{ background: url(../img/canvasShapesInputs.png) 0 33px; }
+	.parFreeDrawRounded{ background: url(../img/canvasShapesInputs.png) 0 50px; }
+	.parFreeDraw{ background: url(../img/canvasShapesInputs.png) 0 67px; }
+	.parFillColor{ background: url(../img/canvasShapesInputs.png) 0 84px; }
+	.parShowNames{ background: url(../img/canvasShapesInputs.png) 0 101px; }
+	.parMousePoints{ background: url(../img/canvasShapesInputs.png) 0 118px; }
+	.parMouseInfo{ background: url(../img/canvasShapesInputs.png) 0 135px; }
+	.parMouseDrop{ background: url(../img/canvasShapesInputs.png) 0 152px; }
+	.parZoomSize{ background: url(../img/canvasShapesInputs.png) 0 169px; }
+	.parDecimals{ background: url(../img/canvasShapesInputs.png) 0 186px; }
+	.parInvertY{ background: url(../img/canvasShapesInputs.png) 0 203px; }
+	.parInvertX{ background: url(../img/canvasShapesInputs.png) 0 220px; }
+	.parProportionY{ background: url(../img/canvasShapesInputs.png) 0 237px; }
+	.parProportionX{ background: url(../img/canvasShapesInputs.png) 0 254px; }
+	.parAutoProportion{ background: url(../img/canvasShapesInputs.png) 0 271px; }
+	.parCanvasHeight{ background: url(../img/canvasShapesInputs.png) 0 288px; }
+	.parCanvasWidth{ background: url(../img/canvasShapesInputs.png) 0 305px; }
+	.parFractionGrid{ background: url(../img/canvasShapesInputs.png) 0 322px; }
+	.parAxes{ background: url(../img/canvasShapesInputs.png) 0 339px; }
+	.parGrid{ background: url(../img/canvasShapesInputs.png) 0 356px; }
+	
+	/*FOOTER*/
+	#footer{max-width:85%; margin:auto; background:darkGray; color:whiteSmoke; padding:15px;}
+	footer{
+		padding: 5rem 6rem;
+    background-color: #159957;
+    background-image: linear-gradient(60deg, #155799, #159957);
+    color: #fff;
+    text-align: center;
+	}
+	footer a{
+		color: darkOrange;
+	}
