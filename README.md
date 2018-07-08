@@ -2,7 +2,7 @@ JSduino v0.1.0
 by GuerraTron  
 2018@<dinertron@gmail.com>
 
-[![JSduino-logo](./JSduino-logo.png)](http://guerratron.github.io/JSduino "JSduino Página Web")
+[![JSduino-logo](./JSduino_logo.png)](http://guerratron.github.io/JSduino "JSduino Página Web")
 
 ## INTRO: ##
 
